@@ -3,11 +3,13 @@ package com.rerere.iwara4a
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.rerere.iwara4a.ui.LocalNavController
+import com.rerere.iwara4a.ui.page.IndexPage
+import com.rerere.iwara4a.ui.page.LoginPage
 import com.rerere.iwara4a.ui.theme.Iwara4aTheme
 
 class MainActivity : ComponentActivity() {
@@ -15,24 +17,19 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             Iwara4aTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(color = MaterialTheme.colors.background) {
-                    Greeting("Android")
+                val navController = rememberNavController()
+                CompositionLocalProvider(LocalNavController provides navController) {
+                    NavHost(navController, "index"){
+                        composable("index"){
+                            IndexPage()
+                        }
+
+                        composable("login"){
+                            LoginPage()
+                        }
+                    }
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String) {
-    Text(text = "Hello $name!")
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    Iwara4aTheme {
-        Greeting("Android")
     }
 }

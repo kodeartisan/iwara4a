@@ -2,7 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.rerere.iwara4a">
 
+    <!-- 权限申请 -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+
     <application
+        android:name=".AppContext"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
