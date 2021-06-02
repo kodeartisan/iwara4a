@@ -1,5 +1,6 @@
 # Iwara4A
 基于Jetpack Compose开发的 iwara 安卓app, 采用Material Design, 支持夜间模式, 支持绝大多数iwara网站上的功能。
+(Iwara的服务器老是无响应，这让我很难办啊)
 
 ## 📢 前言&QA
 1. 该应用为毕业前学习安卓的练手项目，只要我以后有空，应该会一直维护
@@ -8,6 +9,7 @@
 4. 有能内推的大佬帮帮忙吧，求个Job
 
 ## 🎨 主要技术栈
+* MVVM 架构
 * Jetpack Compose (构建UI)
 * Kotlin Coroutine (协程)
 * Okhttp + Jsoup (解析网页)

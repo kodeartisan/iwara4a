@@ -13,7 +13,7 @@ import com.google.accompanist.insets.statusBarsPadding
 import com.rerere.iwara4a.R
 
 @Composable
-fun IndexPage(navController: NavController, indexViewModel: IndexViewModel = hiltViewModel()){
+fun IndexScreen(navController: NavController, indexViewModel: IndexViewModel = hiltViewModel()){
     Scaffold(
         topBar = {
             TopBar()

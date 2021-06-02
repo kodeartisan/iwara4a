@@ -14,12 +14,5 @@ import javax.inject.Inject
 class IndexViewModel @Inject constructor(
 
 ) : ViewModel() {
-    init {
-        registerListener()
-    }
-
-    override fun onCleared() {
-        unregisterListener()
-    }
 
 }
