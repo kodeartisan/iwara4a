@@ -8,10 +8,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.rerere.iwara4a.ui.LocalNavController
-import com.rerere.iwara4a.ui.page.IndexPage
-import com.rerere.iwara4a.ui.page.LoginPage
+import com.rerere.iwara4a.ui.page.index.IndexPage
+import com.rerere.iwara4a.ui.page.login.LoginPage
 import com.rerere.iwara4a.ui.theme.Iwara4aTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
