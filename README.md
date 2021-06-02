@@ -1,15 +1,29 @@
 # Iwara4A
-基于Jetpack Compose开发的 iwara 安卓app
-正在开发中...咕咕咕
+基于Jetpack Compose开发的 iwara 安卓app, 采用Material Design, 支持夜间模式, 支持绝大多数iwara网站上的功能。
 
-## 为什么要开发这个app
-学习安卓开发，要毕业了，要恰饭的嘛
+## 📢 前言&QA
+1. 该应用为毕业前学习安卓的练手项目，只要我以后有空，应该会一直维护
+2. 如果你懂Jetpack Compose/Kotlin，欢迎提交PR！
+3. 闲聊群: 935173109
+4. 有能内推的大佬帮帮忙吧，求个Job
 
-## 计划功能支持
+## 🎨 主要技术栈
+* Jetpack Compose (构建UI)
+* Kotlin Coroutine (协程)
+* Okhttp + Jsoup (解析网页)
+* Retrofit (访问Restful API)
+* EventBus (事件总线)
+* Hilt (依赖注入)
+
+## 📜 计划中的功能
 * 登录账号
-* 浏览视频/图片
+* 浏览 视频/图片/订阅
 * 查看个人信息
-* 收藏夹
+* 管理收藏夹
 * 评论
+
+## 🔒 不会支持的功能
+* 论坛系统
+* 同时支持里站和外站
 
 
