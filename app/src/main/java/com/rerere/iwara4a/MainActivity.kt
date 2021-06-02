@@ -3,11 +3,15 @@ package com.rerere.iwara4a
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.primarySurface
+import androidx.compose.runtime.SideEffect
+import androidx.core.view.WindowCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.rerere.iwara4a.ui.LocalNavController
+import com.google.accompanist.insets.ProvideWindowInsets
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.rerere.iwara4a.ui.page.index.IndexPage
 import com.rerere.iwara4a.ui.page.login.LoginPage
 import com.rerere.iwara4a.ui.theme.Iwara4aTheme
@@ -17,16 +21,28 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+
         setContent {
-            Iwara4aTheme {
-                val navController = rememberNavController()
-                CompositionLocalProvider(LocalNavController provides navController) {
-                    NavHost(navController, "index"){
-                        composable("index"){
-                            IndexPage()
+            ProvideWindowInsets {
+                Iwara4aTheme {
+                    val navController = rememberNavController()
+                    val systemUiController = rememberSystemUiController()
+                    val primaryColor = MaterialTheme.colors.primarySurface
+                    // set ui color
+                    SideEffect {
+                        println("SET UI COLOR")
+                        systemUiController.setNavigationBarColor(primaryColor)
+                        systemUiController.setStatusBarColor(primaryColor, false)
+                    }
+
+                    NavHost(navController, "index") {
+                        composable("index") {
+                            IndexPage(navController)
                         }
 
-                        composable("login"){
+                        composable("login") {
                             LoginPage()
                         }
                     }

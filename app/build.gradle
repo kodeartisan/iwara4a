@@ -53,6 +53,9 @@ dependencies {
     implementation 'androidx.activity:activity-compose:1.3.0-alpha08'
     implementation "androidx.compose.runtime:runtime-livedata:$compose_version"
 
+    // EventBus
+    implementation 'org.greenrobot:eventbus:3.2.0'
+
     // Paging3
     def paging_version = "3.0.0"
     implementation "androidx.paging:paging-runtime-ktx:$paging_version"
