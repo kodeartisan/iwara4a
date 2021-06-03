@@ -73,7 +73,7 @@ dependencies {
     implementation "androidx.navigation:navigation-compose:2.4.0-alpha01"
 
     // accompanist
-    def acc_version = "0.10.0"
+    def acc_version = "0.11.1"
     // Pager
     implementation "com.google.accompanist:accompanist-pager:$acc_version"
     // Swipe to refresh
