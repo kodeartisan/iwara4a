@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.primarySurface
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
@@ -28,34 +29,39 @@ class MainActivity : ComponentActivity() {
     @ExperimentalMaterialApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         WindowCompat.setDecorFitsSystemWindows(window, false)
-
         setContent {
-            ProvideWindowInsets {
-                Iwara4aTheme {
-                    val navController = rememberNavController()
-                    val systemUiController = rememberSystemUiController()
-                    val primaryColor = MaterialTheme.colors.primarySurface
+            ComposeContent()
+        }
+    }
 
-                    // set ui color
-                    SideEffect {
-                        systemUiController.setNavigationBarColor(primaryColor)
-                        systemUiController.setStatusBarColor(primaryColor, false)
+    @ExperimentalMaterialApi
+    @ExperimentalPagerApi
+    @Composable
+    private fun ComposeContent(){
+        ProvideWindowInsets {
+            Iwara4aTheme {
+                val navController = rememberNavController()
+                val systemUiController = rememberSystemUiController()
+                val primaryColor = MaterialTheme.colors.primarySurface
+
+                // set ui color
+                SideEffect {
+                    systemUiController.setNavigationBarColor(primaryColor)
+                    systemUiController.setStatusBarColor(primaryColor, false)
+                }
+
+                NavHost(modifier = Modifier.fillMaxSize(), navController = navController, startDestination = "splash") {
+                    composable("splash"){
+                        SplashScreen(navController)
                     }
 
-                    NavHost(modifier = Modifier.fillMaxSize(), navController = navController, startDestination = "splash") {
-                        composable("splash"){
-                            SplashScreen(navController)
-                        }
+                    composable("index") {
+                        IndexScreen(navController)
+                    }
 
-                        composable("index") {
-                            IndexScreen(navController)
-                        }
-
-                        composable("login") {
-                            LoginScreen(navController)
-                        }
+                    composable("login") {
+                        LoginScreen(navController)
                     }
                 }
             }

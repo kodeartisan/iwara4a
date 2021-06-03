@@ -17,6 +17,7 @@
     <style name="Theme.Iwara4a.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+        <item name="android:statusBarColor" tools:targetApi="l">#00000000</item>
     </style>
 
     <style name="Theme.Iwara4a.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />

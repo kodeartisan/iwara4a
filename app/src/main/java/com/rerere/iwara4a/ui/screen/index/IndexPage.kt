@@ -25,19 +25,22 @@ import kotlinx.coroutines.launch
 @ExperimentalMaterialApi
 @Composable
 fun IndexScreen(navController: NavController, indexViewModel: IndexViewModel = hiltViewModel()) {
-    val pagerState = rememberPagerState(pageCount = 3, initialPage = 1, infiniteLoop = true)
+    val pagerState = rememberPagerState(pageCount = 3, initialPage = 1)
     val scaffoldState = rememberScaffoldState()
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = { TopBar() },
         bottomBar = {
             BottomBar(pagerState = pagerState)
+        },
+        drawerContent = {
+            IndexDrawer(navController)
         }
     ) {
         HorizontalPager(modifier = Modifier
             .fillMaxSize()
             .padding(it), state = pagerState) {
-            when(it){
+            when (it) {
                 0 -> {
                     IndexPage(indexViewModel)
                 }
