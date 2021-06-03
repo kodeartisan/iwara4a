@@ -8,5 +8,7 @@ import javax.inject.Inject
 class LoginViewModel @Inject constructor(
 
 ): ViewModel() {
+    fun login(userName: String, password: String) {
 
+    }
 }
