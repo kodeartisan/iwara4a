@@ -55,6 +55,7 @@ dependencies {
 
     // EventBus
     implementation 'org.greenrobot:eventbus:3.2.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
 
     // Paging3
     def paging_version = "3.0.0"

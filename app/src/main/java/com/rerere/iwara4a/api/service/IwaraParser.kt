@@ -1,5 +1,9 @@
 package com.rerere.iwara4a.api.service
 
+import com.rerere.iwara4a.api.Response
+import com.rerere.iwara4a.model.Session
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 
 /**
@@ -13,4 +17,7 @@ import okhttp3.OkHttpClient
 class IwaraParser(
     private val okHttpClient: OkHttpClient
 ) {
+    suspend fun login(username: String, password: String): Response<Session> = withContext(Dispatchers.IO){
+        Response.failed("")
+    }
 }

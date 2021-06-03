@@ -2,6 +2,7 @@ package com.rerere.iwara4a.api
 
 import com.rerere.iwara4a.api.service.IwaraParser
 import com.rerere.iwara4a.api.service.IwaraService
+import com.rerere.iwara4a.model.Session
 
 /**
  * IwaraAPI接口的具体实现
@@ -13,5 +14,5 @@ class IwaraApiImpl(
     private val iwaraParser: IwaraParser,
     private val iwaraService: IwaraService
 ): IwaraApi {
-
+    override suspend fun login(username: String, password: String): Response<Session> = iwaraParser.login(username, password)
 }
