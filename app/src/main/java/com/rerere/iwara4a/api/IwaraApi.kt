@@ -1,6 +1,6 @@
 package com.rerere.iwara4a.api
 
-import com.rerere.iwara4a.model.Session
+import com.rerere.iwara4a.model.session.Session
 
 /**
  * 提供远程资源API, 通过连接IWARA来获取数据

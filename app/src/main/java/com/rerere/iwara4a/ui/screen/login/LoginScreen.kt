@@ -54,12 +54,6 @@ fun LoginScreen(navController: NavController, loginViewModel: LoginViewModel = h
 @Composable
 private fun Content(loginViewModel: LoginViewModel, navController: NavController) {
     val context = LocalContext.current
-    var username by remember {
-        mutableStateOf("")
-    }
-    var password by remember {
-        mutableStateOf("")
-    }
     var showPassword by remember {
         mutableStateOf(false)
     }
@@ -115,8 +109,8 @@ private fun Content(loginViewModel: LoginViewModel, navController: NavController
         // Username
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
-            value = username,
-            onValueChange = { username = it },
+            value = loginViewModel.userName,
+            onValueChange = { loginViewModel.userName = it },
             label = {
                 Text(
                     text = "用户名"
@@ -128,8 +122,8 @@ private fun Content(loginViewModel: LoginViewModel, navController: NavController
         // Password
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
-            value = password,
-            onValueChange = { password = it },
+            value = loginViewModel.password,
+            onValueChange = { loginViewModel.password = it },
             label = {
                 Text(
                     text = "密码"
@@ -165,13 +159,13 @@ private fun Content(loginViewModel: LoginViewModel, navController: NavController
         Button(
             modifier = Modifier.fillMaxWidth(),
             onClick = {
-                if (username.isBlank() || password.isBlank()) {
+                if (loginViewModel.userName.isBlank() || loginViewModel.password.isBlank()) {
                     Toast.makeText(context, "用户名或密码不能为空！", Toast.LENGTH_SHORT).show()
                     return@Button
                 }
 
                 progressDialog.show()
-                loginViewModel.login(username, password) {
+                loginViewModel.login {
                     // 处理结果
                     if (it) {
                         // 登录成功

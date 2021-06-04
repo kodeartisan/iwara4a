@@ -2,7 +2,7 @@ package com.rerere.iwara4a.repo
 
 import com.rerere.iwara4a.api.IwaraApi
 import com.rerere.iwara4a.api.Response
-import com.rerere.iwara4a.model.Session
+import com.rerere.iwara4a.model.session.Session
 import javax.inject.Inject
 
 class UserRepo @Inject constructor(

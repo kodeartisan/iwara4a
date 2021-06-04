@@ -2,7 +2,7 @@ package com.rerere.iwara4a.api.service
 
 import android.util.Log
 import com.rerere.iwara4a.api.Response
-import com.rerere.iwara4a.model.Session
+import com.rerere.iwara4a.model.session.Session
 import com.rerere.iwara4a.util.okhttp.await
 import com.rerere.iwara4a.util.okhttp.getCookie
 import kotlinx.coroutines.Dispatchers
