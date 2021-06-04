@@ -26,6 +26,8 @@ object NetworkModule {
     @Singleton
     fun provideHttpClient(): OkHttpClient = OkHttpClient.Builder()
         .connectTimeout(10, TimeUnit.SECONDS)
+        .readTimeout(10, TimeUnit.SECONDS)
+        .callTimeout(10, TimeUnit.SECONDS)
         .addInterceptor(UserAgentInterceptor(USER_AGENT))
         .cookieJar(CookieJarHelper())
         .build()

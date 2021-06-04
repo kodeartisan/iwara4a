@@ -1,5 +1,6 @@
 package com.rerere.iwara4a.ui.screen.index
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -7,16 +8,18 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.google.accompanist.coil.rememberCoilPainter
 import com.google.accompanist.insets.statusBarsPadding
 
 @Composable
-fun IndexDrawer(navController: NavController) {
+fun IndexDrawer(navController: NavController, indexViewModel: IndexViewModel) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -46,7 +49,11 @@ fun IndexDrawer(navController: NavController) {
                                 navController.navigate("login")
                             }
                     ) {
-
+                        val painter = rememberCoilPainter(indexViewModel.self.profilePic)
+                        Image(modifier = Modifier.fillMaxSize(), painter = painter, contentDescription = null)
+                        LaunchedEffect(painter.loadState){
+                            println(painter.loadState)
+                        }
                     }
                 }
 
@@ -54,13 +61,13 @@ fun IndexDrawer(navController: NavController) {
                 Column(modifier = Modifier.padding(horizontal = 32.dp, vertical = 16.dp)) {
                     // UserName
                     Text(
-                        text = "Username",
+                        text = indexViewModel.self.nickname,
                         style = MaterialTheme.typography.h5,
                         fontWeight = FontWeight.Bold
                     )
                     // Email
                     CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
-                        Text(text = "re_dev@qq.com")
+                        Text(text = indexViewModel.email)
                     }
                 }
             }

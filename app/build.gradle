@@ -84,6 +84,7 @@ dependencies {
     // Insets
     implementation "com.google.accompanist:accompanist-insets:$acc_version"
     // Coil
+    implementation "io.coil-kt:coil-gif:1.2.1"
     implementation "com.google.accompanist:accompanist-coil:$acc_version"
     // Flow
     implementation "com.google.accompanist:accompanist-flowlayout:$acc_version"

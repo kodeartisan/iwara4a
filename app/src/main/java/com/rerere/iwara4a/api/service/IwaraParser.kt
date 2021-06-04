@@ -3,6 +3,7 @@ package com.rerere.iwara4a.api.service
 import android.util.Log
 import com.rerere.iwara4a.api.Response
 import com.rerere.iwara4a.model.session.Session
+import com.rerere.iwara4a.model.user.Self
 import com.rerere.iwara4a.util.okhttp.await
 import com.rerere.iwara4a.util.okhttp.getCookie
 import kotlinx.coroutines.Dispatchers
@@ -73,4 +74,35 @@ class IwaraParser(
                 Response.failed(exception.javaClass.name)
             }
         }
+
+    suspend fun getSelf(session: Session): Response<Self> = withContext(Dispatchers.IO){
+        try {
+            Log.i(TAG, "getSelf: Start...")
+            okHttpClient.getCookie().init(session)
+
+            val request = Request.Builder()
+                .url("https://ecchi.iwara.tv/user")
+                .get()
+                .build()
+            val response = okHttpClient.newCall(request).await()
+            val body = Jsoup.parse(response.body?.string() ?: error("null body")).body()
+
+            val nickname = body.getElementsByClass("views-field views-field-name").first().text()
+            val profilePic = "http:" + body.getElementsByClass("views-field views-field-picture")
+                .first()
+                .child(0)
+                .child(0)
+                .attr("src")
+
+            Log.i(TAG, "getSelf: (nickname=$nickname, profilePic=$profilePic)")
+
+            Response.success(Self(
+                nickname = nickname,
+                profilePic = profilePic
+            ))
+        }catch (exception: Exception){
+            exception.printStackTrace()
+            Response.failed(exception.javaClass.name)
+        }
+    }
 }

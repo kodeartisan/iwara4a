@@ -34,7 +34,7 @@ fun IndexScreen(navController: NavController, indexViewModel: IndexViewModel = h
             BottomBar(pagerState = pagerState)
         },
         drawerContent = {
-            IndexDrawer(navController)
+            IndexDrawer(navController, indexViewModel)
         }
     ) {
         HorizontalPager(modifier = Modifier
