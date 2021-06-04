@@ -1,10 +1,10 @@
 package com.rerere.iwara4a.event
 
-import org.greenrobot.eventbus.EventBus
+import com.rerere.iwara4a.model.Session
 
 /**
  * 用户登录事件
  */
 data class LoginEvent(
-    val value: String
+    val session: Session
 )

@@ -76,7 +76,7 @@ private fun BottomBar(pagerState: PagerState) {
                 coroutineScope.launch { pagerState.animateScrollToPage(0) }
             },
             icon = {
-                Icon(painterResource(R.drawable.video_icon), null)
+                Icon(painter = painterResource(R.drawable.video_icon), contentDescription = null)
             },
             label = {
                 Text(text = "视频")
@@ -88,7 +88,7 @@ private fun BottomBar(pagerState: PagerState) {
                 coroutineScope.launch { pagerState.animateScrollToPage(1) }
             },
             icon = {
-                Icon(painterResource(R.drawable.index_icon), null)
+                Icon(painter = painterResource(R.drawable.index_icon), contentDescription = null)
             },
             label = {
                 Text(text = "主页")
@@ -100,7 +100,7 @@ private fun BottomBar(pagerState: PagerState) {
                 coroutineScope.launch { pagerState.animateScrollToPage(2) }
             },
             icon = {
-                Icon(painterResource(R.drawable.image_icon), null)
+                Icon(painter = painterResource(R.drawable.image_icon), contentDescription = null)
             },
             label = {
                 Text(text = "图片")

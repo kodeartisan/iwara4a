@@ -4,7 +4,7 @@ import com.rerere.iwara4a.api.IwaraApi
 import com.rerere.iwara4a.api.IwaraApiImpl
 import com.rerere.iwara4a.api.service.IwaraParser
 import com.rerere.iwara4a.api.service.IwaraService
-import com.rerere.iwara4a.util.okhttp.HeaderInterceptor
+import com.rerere.iwara4a.util.okhttp.CookieJarHelper
 import com.rerere.iwara4a.util.okhttp.UserAgentInterceptor
 import dagger.Module
 import dagger.Provides
@@ -27,6 +27,7 @@ object NetworkModule {
     fun provideHttpClient(): OkHttpClient = OkHttpClient.Builder()
         .connectTimeout(10, TimeUnit.SECONDS)
         .addInterceptor(UserAgentInterceptor(USER_AGENT))
+        .cookieJar(CookieJarHelper())
         .build()
 
     @Provides
