@@ -6,8 +6,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -64,8 +67,13 @@ fun IndexDrawer(navController: NavController, indexViewModel: IndexViewModel) {
                         fontWeight = FontWeight.Bold
                     )
                     // Email
-                    CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
-                        Text(text = indexViewModel.email)
+                    Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                        CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
+                            Text(modifier = Modifier.weight(1f), text = indexViewModel.email)
+                        }
+                        IconButton(modifier = Modifier.size(25.dp), onClick = { indexViewModel.refreshSelf() }) {
+                            Icon(modifier = Modifier.size(25.dp), imageVector = Icons.Default.Refresh, contentDescription = "刷新个人信息")
+                        }
                     }
                 }
             }

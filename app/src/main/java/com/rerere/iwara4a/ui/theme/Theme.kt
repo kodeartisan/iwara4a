@@ -18,7 +18,8 @@ private val LightColorPalette = lightColors(
     primary = TEAL300,
     primaryVariant = TEAL700,
     secondary = Color(0xFF64FFDA),
-    secondaryVariant = Color(0xFF1DE9B6)
+    secondaryVariant = Color(0xFF1DE9B6),
+    onSurface = TEAL300
 )
 
 @Composable

@@ -53,7 +53,7 @@ class IndexViewModel @Inject constructor(
         unregisterListener()
     }
 
-    private fun refreshSelf() = viewModelScope.launch {
+    fun refreshSelf() = viewModelScope.launch {
         loadingSelf = true
         email = sharedPreferencesOf("session").getString("username","请先登录你的账号吧")!!
         val response = userRepo.getSelf(sessionManager.session)

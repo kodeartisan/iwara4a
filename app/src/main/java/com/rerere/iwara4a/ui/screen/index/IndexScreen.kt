@@ -59,7 +59,7 @@ fun IndexScreen(navController: NavController, indexViewModel: IndexViewModel = h
                     VideoListPage(indexViewModel)
                 }
                 1 -> {
-                    SubPage(indexViewModel)
+                    SubPage(navController, indexViewModel)
                 }
                 2 -> {
                     ImageListPage(indexViewModel)

@@ -1,4 +1,4 @@
-package com.rerere.iwara4a
+package com.rerere.iwara4a.ui.activity
 
 import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
@@ -15,8 +15,10 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.rememberNavController
 import coil.ImageLoader
 import coil.decode.GifDecoder
@@ -28,6 +30,7 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.rerere.iwara4a.ui.screen.index.IndexScreen
 import com.rerere.iwara4a.ui.screen.login.LoginScreen
 import com.rerere.iwara4a.ui.screen.splash.SplashScreen
+import com.rerere.iwara4a.ui.screen.video.VideoScreen
 import com.rerere.iwara4a.ui.theme.Iwara4aTheme
 import dagger.hilt.android.AndroidEntryPoint
 import okhttp3.OkHttpClient
@@ -92,6 +95,14 @@ class MainActivity : ComponentActivity() {
 
                     composable("login") {
                         LoginScreen(navController)
+                    }
+
+                    composable("video/{videoId}", arguments = listOf(
+                        navArgument("videoId"){
+                            type = NavType.StringType
+                        }
+                    )){
+                        VideoScreen(navController, it.arguments?.getString("videoId")!!)
                     }
                 }
             }
