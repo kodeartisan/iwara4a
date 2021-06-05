@@ -88,7 +88,7 @@ class IwaraParser(
             val body = Jsoup.parse(response.body?.string() ?: error("null body")).body()
 
             val nickname = body.getElementsByClass("views-field views-field-name").first().text()
-            val profilePic = "http:" + body.getElementsByClass("views-field views-field-picture")
+            val profilePic = "https:" + body.getElementsByClass("views-field views-field-picture")
                 .first()
                 .child(0)
                 .child(0)

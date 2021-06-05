@@ -25,6 +25,7 @@ class IndexViewModel @Inject constructor(
 ) : ViewModel() {
     var self by mutableStateOf(Self.GUEST)
     var email by mutableStateOf("")
+    var loadingSelf by mutableStateOf(false)
 
     init {
         registerListener()
@@ -36,12 +37,13 @@ class IndexViewModel @Inject constructor(
     }
 
     private fun refreshSelf() = viewModelScope.launch {
+        loadingSelf = true
         email = sharedPreferencesOf("session").getString("username","请先登录你的账号吧")!!
-
         val response = userRepo.getSelf(sessionManager.session)
         if (response.isSuccess()) {
             self = response.read()
         }
+        loadingSelf = false
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

@@ -1,17 +1,18 @@
 package com.rerere.iwara4a.util.okhttp
 
+import kotlinx.coroutines.suspendCancellableCoroutine
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
 import java.io.IOException
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
-import kotlin.coroutines.suspendCoroutine
 
 suspend fun Call.await(): Response {
-    return suspendCoroutine {
+    return suspendCancellableCoroutine {
         enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
+                if(it.isCancelled) return
                 it.resumeWithException(e)
             }
 
@@ -19,5 +20,14 @@ suspend fun Call.await(): Response {
                 it.resume(response)
             }
         })
+
+        it.invokeOnCancellation {
+            try {
+                cancel()
+            } catch (e: Exception){
+                println("===== CANCEL ======")
+                // IGNORE
+            }
+        }
     }
 }

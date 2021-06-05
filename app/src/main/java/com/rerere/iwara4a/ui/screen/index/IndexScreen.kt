@@ -1,15 +1,22 @@
 package com.rerere.iwara4a.ui.screen.index
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.google.accompanist.coil.rememberCoilPainter
 import com.google.accompanist.insets.navigationBarsPadding
 import com.google.accompanist.insets.statusBarsPadding
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -29,7 +36,7 @@ fun IndexScreen(navController: NavController, indexViewModel: IndexViewModel = h
     val scaffoldState = rememberScaffoldState()
     Scaffold(
         scaffoldState = scaffoldState,
-        topBar = { TopBar() },
+        topBar = { TopBar(scaffoldState, indexViewModel) },
         bottomBar = {
             BottomBar(pagerState = pagerState)
         },
@@ -56,11 +63,23 @@ fun IndexScreen(navController: NavController, indexViewModel: IndexViewModel = h
 }
 
 @Composable
-private fun TopBar() {
+private fun TopBar(scaffoldState: ScaffoldState, indexViewModel: IndexViewModel) {
+    val coroutineScope = rememberCoroutineScope()
     TopAppBar(
         modifier = Modifier.statusBarsPadding(),
         title = {
             Text(text = stringResource(R.string.app_name))
+        },
+        navigationIcon = {
+            IconButton(onClick = {
+                coroutineScope.launch {
+                    scaffoldState.drawerState.open()
+                }
+            }) {
+                Box(modifier = Modifier.size(30.dp).clip(CircleShape)){
+                    Image(modifier = Modifier.fillMaxSize(), painter = rememberCoilPainter(indexViewModel.self.profilePic), contentDescription = null)
+                }
+            }
         }
     )
 }

@@ -8,7 +8,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -20,6 +19,8 @@ import com.google.accompanist.insets.statusBarsPadding
 
 @Composable
 fun IndexDrawer(navController: NavController, indexViewModel: IndexViewModel) {
+    fun isLoading() = indexViewModel.loadingSelf
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -51,9 +52,6 @@ fun IndexDrawer(navController: NavController, indexViewModel: IndexViewModel) {
                     ) {
                         val painter = rememberCoilPainter(indexViewModel.self.profilePic)
                         Image(modifier = Modifier.fillMaxSize(), painter = painter, contentDescription = null)
-                        LaunchedEffect(painter.loadState){
-                            println(painter.loadState)
-                        }
                     }
                 }
 
@@ -61,7 +59,7 @@ fun IndexDrawer(navController: NavController, indexViewModel: IndexViewModel) {
                 Column(modifier = Modifier.padding(horizontal = 32.dp, vertical = 16.dp)) {
                     // UserName
                     Text(
-                        text = indexViewModel.self.nickname,
+                        text = if(isLoading()) "加载中" else indexViewModel.self.nickname,
                         style = MaterialTheme.typography.h5,
                         fontWeight = FontWeight.Bold
                     )
