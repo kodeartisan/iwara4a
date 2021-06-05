@@ -5,9 +5,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import com.rerere.iwara4a.api.paging.SubscriptionsSource
 import com.rerere.iwara4a.event.LoginEvent
 import com.rerere.iwara4a.model.session.SessionManager
 import com.rerere.iwara4a.model.user.Self
+import com.rerere.iwara4a.repo.MediaRepo
 import com.rerere.iwara4a.repo.UserRepo
 import com.rerere.iwara4a.sharedPreferencesOf
 import com.rerere.iwara4a.util.registerListener
@@ -21,11 +25,24 @@ import javax.inject.Inject
 @HiltViewModel
 class IndexViewModel @Inject constructor(
     private val userRepo: UserRepo,
+    private val mediaRepo: MediaRepo,
     private val sessionManager: SessionManager,
 ) : ViewModel() {
     var self by mutableStateOf(Self.GUEST)
     var email by mutableStateOf("")
     var loadingSelf by mutableStateOf(false)
+
+    val subscriptionPager = Pager(
+        config = PagingConfig(
+            pageSize = 32,
+            initialLoadSize = 32
+        )
+    ){
+        SubscriptionsSource(
+            sessionManager,
+            mediaRepo
+        )
+    }.flow
 
     init {
         registerListener()

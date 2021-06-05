@@ -11,4 +11,6 @@ data class Session(
         .value(value)
         .domain("iwara.tv")
         .build()
+
+    fun isNotEmpty() = key.isNotEmpty() && value.isNotEmpty()
 }

@@ -2,6 +2,9 @@ package com.rerere.iwara4a.api.service
 
 import android.util.Log
 import com.rerere.iwara4a.api.Response
+import com.rerere.iwara4a.model.index.MediaPreview
+import com.rerere.iwara4a.model.index.MediaType
+import com.rerere.iwara4a.model.index.SubscriptionList
 import com.rerere.iwara4a.model.session.Session
 import com.rerere.iwara4a.model.user.Self
 import com.rerere.iwara4a.util.okhttp.await
@@ -103,6 +106,55 @@ class IwaraParser(
         }catch (exception: Exception){
             exception.printStackTrace()
             Response.failed(exception.javaClass.name)
+        }
+    }
+
+    suspend fun getSubscriptionList(session: Session, page: Int): Response<SubscriptionList> = withContext(Dispatchers.IO){
+        try {
+            okHttpClient.getCookie().init(session)
+
+            val request = Request.Builder()
+                .url("https://ecchi.iwara.tv/subscriptions?page=$page")
+                .get()
+                .build()
+            val response = okHttpClient.newCall(request).await()
+            val body = Jsoup.parse(response.body?.string() ?: error("empty body")).body()
+            val elements = body.select("div[id~=^node-[A-Za-z0-9]+\$]")
+
+            val previewList: List<MediaPreview> = elements?.map {
+                val title = it.getElementsByClass("title").text()
+                val author = it.getElementsByClass("username").text()
+                val pic = "https:" + it.getElementsByClass("field-item even")[0].child(0).child(0).attr("src")
+                val likes = it.getElementsByClass("right-icon").text()
+                val watchs = it.getElementsByClass("left-icon").text()
+                val link = it.getElementsByClass("field-item even")[0].child(0).attr("href")
+                val mediaId = link.substring(link.lastIndexOf("/") + 1)
+                val type = if(link.startsWith("/video")) MediaType.VIDEO else MediaType.IMAGE
+
+                MediaPreview(
+                    title = title,
+                    author = author,
+                    previewPic = pic,
+                    likes = likes,
+                    watchs = watchs,
+                    mediaId = mediaId,
+                    type = type
+                )
+            } ?: error("empty elements")
+
+            val totalPage = body.getElementsByClass("pager-current").text().split(" ")[2].toInt()
+            val hasNextPage = totalPage != page
+
+            Response.success(
+                SubscriptionList(
+                    page,
+                    hasNextPage,
+                    previewList
+                )
+            )
+        }catch (ex: Exception){
+            ex.printStackTrace()
+            Response.failed(ex.javaClass.name)
         }
     }
 }

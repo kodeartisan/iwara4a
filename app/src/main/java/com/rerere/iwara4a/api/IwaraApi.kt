@@ -1,5 +1,7 @@
 package com.rerere.iwara4a.api
 
+import androidx.annotation.IntRange
+import com.rerere.iwara4a.model.index.SubscriptionList
 import com.rerere.iwara4a.model.session.Session
 import com.rerere.iwara4a.model.user.Self
 
@@ -23,4 +25,13 @@ interface IwaraApi {
      * @return 简短的个人信息
      */
     suspend fun getSelf(session: Session): Response<Self>
+
+    /**
+     * 获取订阅列表
+     *
+     * @param session 登录凭据
+     * @param page 页数
+     * @return 订阅列表
+     */
+    suspend fun getSubscriptionList(session: Session, @IntRange(from = 1) page: Int): Response<SubscriptionList>
 }

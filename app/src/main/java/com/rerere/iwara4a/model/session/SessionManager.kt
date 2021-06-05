@@ -12,10 +12,7 @@ class SessionManager {
     fun update(key: String, value: String) {
         session.key = key
         session.value = value
-
-        val sharedPreferences = sharedPreferencesOf("session")
-
-        sharedPreferences.edit {
+        sharedPreferencesOf("session").edit {
             putString("key", key)
             putString("value", value)
         }

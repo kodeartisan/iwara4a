@@ -17,4 +17,10 @@ class AppContext : Application() {
     }
 }
 
+/**
+ * 使用顶层函数直接获取 SharedPreference
+ *
+ * @param name SharedPreference名字
+ * @return SharedPreferences实例
+ */
 fun sharedPreferencesOf(name: String): SharedPreferences = AppContext.instance.getSharedPreferences(name, Context.MODE_PRIVATE)

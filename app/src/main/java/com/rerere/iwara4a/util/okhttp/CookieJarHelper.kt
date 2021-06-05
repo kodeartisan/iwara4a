@@ -21,7 +21,9 @@ class CookieJarHelper : CookieJar, Iterable<Cookie> {
 
     fun init(session: Session) {
         clean()
-        cookies.add(session.toCookie())
+        if(session.isNotEmpty()){
+            cookies.add(session.toCookie())
+        }
     }
 }
 

@@ -1,5 +1,6 @@
 package com.rerere.iwara4a.ui.screen.index
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,10 +25,13 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
 import com.rerere.iwara4a.R
-import com.rerere.iwara4a.ui.screen.index.page.IndexPage
+import com.rerere.iwara4a.ui.screen.index.page.ImageListPage
+import com.rerere.iwara4a.ui.screen.index.page.SubPage
+import com.rerere.iwara4a.ui.screen.index.page.VideoListPage
 import com.rerere.iwara4a.util.currentVisualPage
 import kotlinx.coroutines.launch
 
+@ExperimentalFoundationApi
 @ExperimentalPagerApi
 @ExperimentalMaterialApi
 @Composable
@@ -44,18 +48,21 @@ fun IndexScreen(navController: NavController, indexViewModel: IndexViewModel = h
             IndexDrawer(navController, indexViewModel)
         }
     ) {
-        HorizontalPager(modifier = Modifier
+        HorizontalPager(
+            modifier = Modifier
             .fillMaxSize()
-            .padding(it), state = pagerState) {
+            .padding(it),
+            state = pagerState
+        ) {
             when (it) {
                 0 -> {
-                    IndexPage(indexViewModel)
+                    VideoListPage(indexViewModel)
                 }
                 1 -> {
-                    IndexPage(indexViewModel)
+                    SubPage(indexViewModel)
                 }
                 2 -> {
-                    IndexPage(indexViewModel)
+                    ImageListPage(indexViewModel)
                 }
             }
         }
@@ -107,10 +114,10 @@ private fun BottomBar(pagerState: PagerState) {
                 coroutineScope.launch { pagerState.animateScrollToPage(1) }
             },
             icon = {
-                Icon(painter = painterResource(R.drawable.index_icon), contentDescription = null)
+                Icon(painter = painterResource(R.drawable.subscriptions), contentDescription = null)
             },
             label = {
-                Text(text = "主页")
+                Text(text = "关注")
             }
         )
         BottomNavigationItem(
