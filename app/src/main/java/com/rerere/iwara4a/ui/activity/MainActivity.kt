@@ -2,6 +2,7 @@ package com.rerere.iwara4a.ui.activity
 
 import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
+import android.view.Window
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -14,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -47,6 +49,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
+        requestWindowFeature(Window.FEATURE_NO_TITLE)
 
         val imageLoader = ImageLoader.Builder(this)
             .okHttpClient(okHttpClient)
@@ -81,7 +84,7 @@ class MainActivity : ComponentActivity() {
                 // set ui color
                 SideEffect {
                     systemUiController.setNavigationBarColor(primaryColor)
-                    systemUiController.setStatusBarColor(primaryColor, false)
+                    systemUiController.setStatusBarColor(Color.Transparent, false)
                 }
 
                 NavHost(modifier = Modifier.fillMaxSize(), navController = navController, startDestination = "splash") {

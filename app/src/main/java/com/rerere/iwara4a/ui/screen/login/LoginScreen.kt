@@ -27,8 +27,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.google.accompanist.insets.navigationBarsWithImePadding
-import com.google.accompanist.insets.statusBarsPadding
 import com.rerere.iwara4a.R
+import com.rerere.iwara4a.ui.public.FullScreenTopBar
 import com.vanpra.composematerialdialogs.*
 
 @ExperimentalAnimationApi
@@ -209,8 +209,7 @@ private fun Content(loginViewModel: LoginViewModel, navController: NavController
 
 @Composable
 private fun TopBar(navController: NavController) {
-    TopAppBar(
-        modifier = Modifier.statusBarsPadding(),
+    FullScreenTopBar(
         title = {
             Text(text = "登录账号")
         },

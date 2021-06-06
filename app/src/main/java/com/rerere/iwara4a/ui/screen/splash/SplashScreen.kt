@@ -40,7 +40,7 @@ fun SplashScreen(navController: NavController){
     }
     LaunchedEffect(Unit){
         delay(1000L)
-        navController.navigate("index"){
+        navController.navigate("video/xxxx"){
             popUpTo("splash"){
                 inclusive = true
             }

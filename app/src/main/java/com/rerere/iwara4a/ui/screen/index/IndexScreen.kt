@@ -19,12 +19,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.google.accompanist.coil.rememberCoilPainter
 import com.google.accompanist.insets.navigationBarsPadding
-import com.google.accompanist.insets.statusBarsPadding
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
 import com.rerere.iwara4a.R
+import com.rerere.iwara4a.ui.public.FullScreenTopBar
 import com.rerere.iwara4a.ui.screen.index.page.ImageListPage
 import com.rerere.iwara4a.ui.screen.index.page.SubPage
 import com.rerere.iwara4a.ui.screen.index.page.VideoListPage
@@ -72,8 +72,7 @@ fun IndexScreen(navController: NavController, indexViewModel: IndexViewModel = h
 @Composable
 private fun TopBar(scaffoldState: ScaffoldState, indexViewModel: IndexViewModel) {
     val coroutineScope = rememberCoroutineScope()
-    TopAppBar(
-        modifier = Modifier.statusBarsPadding(),
+    FullScreenTopBar(
         title = {
             Text(text = stringResource(R.string.app_name))
         },

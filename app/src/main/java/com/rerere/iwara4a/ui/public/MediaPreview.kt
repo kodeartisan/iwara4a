@@ -1,6 +1,5 @@
 package com.rerere.iwara4a.ui.public
 
-import android.content.Intent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -22,7 +21,6 @@ import com.google.accompanist.coil.rememberCoilPainter
 import com.rerere.iwara4a.R
 import com.rerere.iwara4a.model.index.MediaPreview
 import com.rerere.iwara4a.model.index.MediaType
-import com.rerere.iwara4a.ui.activity.VideoActivity
 
 @Composable
 fun MediaPreviewCard(navController: NavController, mediaPreview: MediaPreview) {
@@ -37,11 +35,7 @@ fun MediaPreviewCard(navController: NavController, mediaPreview: MediaPreview) {
             .fillMaxWidth()
             .clickable {
                 if (mediaPreview.type == MediaType.VIDEO) {
-                    // navController.navigate("video/${mediaPreview.mediaId}")
-                    context.startActivity(Intent(
-                        context,
-                        VideoActivity::class.java
-                    ))
+                    navController.navigate("video/${mediaPreview.mediaId}")
                 } else if(mediaPreview.type == MediaType.IMAGE){
                     navController.navigate("image/${mediaPreview.mediaId}")
                 }

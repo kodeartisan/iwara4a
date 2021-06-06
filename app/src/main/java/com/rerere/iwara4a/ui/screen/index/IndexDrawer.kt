@@ -18,22 +18,20 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.google.accompanist.coil.rememberCoilPainter
-import com.google.accompanist.insets.statusBarsPadding
+import com.google.accompanist.insets.statusBarsHeight
 
 @Composable
 fun IndexDrawer(navController: NavController, indexViewModel: IndexViewModel) {
     fun isLoading() = indexViewModel.loadingSelf
-
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .statusBarsPadding()
     ) {
         // Profile
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(185.dp),
+                .statusBarsHeight(185.dp),
             elevation = 8.dp,
             color = MaterialTheme.colors.primaryVariant
         ) {
