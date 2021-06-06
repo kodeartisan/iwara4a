@@ -2,6 +2,7 @@ package com.rerere.iwara4a.api
 
 import com.rerere.iwara4a.api.service.IwaraParser
 import com.rerere.iwara4a.api.service.IwaraService
+import com.rerere.iwara4a.model.image.ImageDetail
 import com.rerere.iwara4a.model.index.SubscriptionList
 import com.rerere.iwara4a.model.session.Session
 import com.rerere.iwara4a.model.user.Self
@@ -19,4 +20,5 @@ class IwaraApiImpl(
     override suspend fun login(username: String, password: String): Response<Session> = iwaraParser.login(username, password)
     override suspend fun getSelf(session: Session): Response<Self> = iwaraParser.getSelf(session)
     override suspend fun getSubscriptionList(session: Session, page: Int): Response<SubscriptionList> = iwaraParser.getSubscriptionList(session,page)
+    override suspend fun getImagePageDetail(session: Session, imageId: String): Response<ImageDetail> = iwaraParser.getImagePageDetail(session, imageId)
 }

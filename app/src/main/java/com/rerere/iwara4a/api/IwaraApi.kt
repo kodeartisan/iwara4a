@@ -1,6 +1,7 @@
 package com.rerere.iwara4a.api
 
 import androidx.annotation.IntRange
+import com.rerere.iwara4a.model.image.ImageDetail
 import com.rerere.iwara4a.model.index.SubscriptionList
 import com.rerere.iwara4a.model.session.Session
 import com.rerere.iwara4a.model.user.Self
@@ -34,4 +35,13 @@ interface IwaraApi {
      * @return 订阅列表
      */
     suspend fun getSubscriptionList(session: Session, @IntRange(from = 1) page: Int): Response<SubscriptionList>
+
+    /**
+     * 获取图片页面信息
+     *
+     * @param session 登录凭据
+     * @param imageId 图片ID
+     * @return 图片页面信息
+     */
+    suspend fun getImagePageDetail(session: Session, imageId: String): Response<ImageDetail>
 }

@@ -29,6 +29,7 @@ import com.google.accompanist.coil.LocalImageLoader
 import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.rerere.iwara4a.ui.screen.image.ImageScreen
 import com.rerere.iwara4a.ui.screen.index.IndexScreen
 import com.rerere.iwara4a.ui.screen.login.LoginScreen
 import com.rerere.iwara4a.ui.screen.splash.SplashScreen
@@ -106,6 +107,14 @@ class MainActivity : ComponentActivity() {
                         }
                     )){
                         VideoScreen(navController, it.arguments?.getString("videoId")!!)
+                    }
+
+                    composable("image/{imageId}", arguments = listOf(
+                        navArgument("imageId"){
+                            type = NavType.StringType
+                        }
+                    )){
+                        ImageScreen(navController, it.arguments?.getString("imageId")!!)
                     }
                 }
             }

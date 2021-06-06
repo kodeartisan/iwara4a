@@ -2,6 +2,7 @@ package com.rerere.iwara4a.api.service
 
 import android.util.Log
 import com.rerere.iwara4a.api.Response
+import com.rerere.iwara4a.model.image.ImageDetail
 import com.rerere.iwara4a.model.index.MediaPreview
 import com.rerere.iwara4a.model.index.MediaType
 import com.rerere.iwara4a.model.index.SubscriptionList
@@ -155,6 +156,44 @@ class IwaraParser(
         }catch (ex: Exception){
             ex.printStackTrace()
             Response.failed(ex.javaClass.name)
+        }
+    }
+
+    suspend fun getImagePageDetail(session: Session, imageId: String): Response<ImageDetail> = withContext(Dispatchers.IO){
+        try {
+            Log.i(TAG, "getImagePageDetail: start load image detail: $imageId")
+
+            okHttpClient.getCookie().init(session)
+
+            val request = Request.Builder()
+                .url("https://ecchi.iwara.tv/images/$imageId")
+                .get()
+                .build()
+            val response = okHttpClient.newCall(request).await()
+            val body = Jsoup.parse(response.body?.string() ?: error("empty body")).body()
+
+            val title = body.getElementsByClass("title").first().text()
+            val imageLinks = body.getElementsByClass("field field-name-field-images field-type-file field-label-hidden").select("img").map {
+                "https:${it.attr("src")}"
+            }
+            val authorLink = body.getElementsByClass("username").first().attr("href")
+            val authorId = authorLink.substring(authorLink.lastIndexOf("/") + 1)
+            val authorPic = "https:" + body.getElementsByClass("user-picture").first().select("img").attr("src")
+            val watchs = body.getElementsByClass("node-views").first().text().trim()
+
+            Response.success(
+                ImageDetail(
+                    id = imageId,
+                    title = title,
+                    imageLinks = imageLinks,
+                    authorId = authorId,
+                    authorProfilePic = authorPic,
+                    watchs = watchs
+                )
+            )
+        }catch (exception: Exception){
+            exception.printStackTrace()
+            Response.failed()
         }
     }
 }
