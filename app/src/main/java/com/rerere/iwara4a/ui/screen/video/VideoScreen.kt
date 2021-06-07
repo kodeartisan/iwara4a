@@ -13,9 +13,12 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -26,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -47,6 +51,7 @@ import com.rerere.iwara4a.ui.public.FullScreenTopBar
 import com.rerere.iwara4a.util.noRippleClickable
 import kotlinx.coroutines.launch
 
+@ExperimentalMaterialApi
 @ExperimentalAnimationApi
 @ExperimentalPagerApi
 @SuppressLint("WrongConstant")
@@ -137,7 +142,7 @@ fun VideoScreen(
                             .weight(1f)
                             .fillMaxWidth()
                     ) {
-                        VideoInfo(videoViewModel.videoDetail)
+                        VideoInfo(navController, videoViewModel.videoDetail)
                     }
                 }
                 videoViewModel.isLoading -> {
@@ -210,10 +215,11 @@ private fun TabItem(pagerState: PagerState, index: Int, text: String) {
     }
 }
 
+@ExperimentalMaterialApi
 @ExperimentalAnimationApi
 @ExperimentalPagerApi
 @Composable
-private fun VideoInfo(videoDetail: VideoDetail) {
+private fun VideoInfo(navController: NavController, videoDetail: VideoDetail) {
     val pagerState = rememberPagerState(pageCount = 2, initialPage = 0)
     val coroutineScope = rememberCoroutineScope()
     Column(Modifier.fillMaxSize()) {
@@ -237,7 +243,7 @@ private fun VideoInfo(videoDetail: VideoDetail) {
                 state = pagerState
             ) {
                 when (it) {
-                    0 -> VideoDescription(videoDetail)
+                    0 -> VideoDescription(navController ,videoDetail)
                     1 -> CommentPage()
                 }
             }
@@ -245,77 +251,132 @@ private fun VideoInfo(videoDetail: VideoDetail) {
     }
 }
 
+@ExperimentalMaterialApi
 @Composable
-private fun VideoDescription(videoDetail: VideoDetail) {
-    Column(modifier = Modifier.fillMaxSize()) {
-        Card(modifier = Modifier.padding(8.dp), elevation = 4.dp) {
-            Column(
+private fun VideoDescription(navController: NavController, videoDetail: VideoDetail) {
+    LazyColumn(modifier = Modifier.fillMaxSize()) {
+        item {
+            // 视频简介
+            Card(modifier = Modifier.padding(8.dp), elevation = 4.dp) {
+                Column(
+                    modifier = Modifier
+                        .animateContentSize()
+                        .padding(16.dp)
+                ) {
+                    // 作者信息
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 5.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        // 作者头像
+                        Box(
+                            modifier = Modifier
+                                .size(40.dp)
+                                .clip(CircleShape)
+                        ) {
+                            Image(
+                                modifier = Modifier.fillMaxSize(),
+                                painter = rememberCoilPainter(videoDetail.authorPic),
+                                contentDescription = null
+                            )
+                        }
+
+                        // 作者名字
+                        Text(
+                            modifier = Modifier.padding(horizontal = 16.dp),
+                            text = videoDetail.authorName,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 25.sp,
+                            color = Color(0xfff45a8d)
+                        )
+                    }
+                    // 视频信息
+                    Row(Modifier.padding(vertical = 4.dp)) {
+                        Text(text = "播放: ${videoDetail.watchs} 喜欢: ${videoDetail.likes}")
+                    }
+
+                    var expand by remember {
+                        mutableStateOf(false)
+                    }
+                    Crossfade(expand) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp)
+                        ) {
+                            CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.disabled) {
+                                // TODO: 解析URL
+                                Text(
+                                    text = videoDetail.description,
+                                    maxLines = if (expand) 10 else 1
+                                )
+                            }
+                            Row(
+                                Modifier
+                                    .fillMaxWidth()
+                                    .noRippleClickable { expand = !expand }
+                                    .padding(horizontal = 8.dp),
+                                horizontalArrangement = Arrangement.End
+                            ) {
+                                IconButton(
+                                    modifier = Modifier.size(20.dp),
+                                    onClick = { expand = !expand }) {
+                                    Icon(
+                                        imageVector = if (it) Icons.Default.ArrowUpward else Icons.Default.ArrowDownward,
+                                        contentDescription = null
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        // 更多视频
+        item {
+            Text(
+                text = "该作者的其他视频:",
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
+            )
+        }
+
+        items(videoDetail.moreVideo) {
+            Card(
                 modifier = Modifier
-                    .animateContentSize()
+                    .fillMaxWidth()
                     .padding(16.dp)
             ) {
-                // 作者信息
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 5.dp),
+                        .clickable {
+                            println(it.id)
+                            navController.navigate("video/${it.id}")
+                        }
+                        .padding(8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // 作者头像
-                    Box(
-                        modifier = Modifier
-                            .size(40.dp)
-                            .clip(CircleShape)
-                    ) {
+                    Box(modifier = Modifier
+                        .height(60.dp)
+                        .clip(RoundedCornerShape(5.dp))) {
                         Image(
-                            modifier = Modifier.fillMaxSize(),
-                            painter = rememberCoilPainter(videoDetail.authorPic),
-                            contentDescription = null
+                            modifier = Modifier.fillMaxHeight(),
+                            painter = rememberCoilPainter(it.pic),
+                            contentDescription = null,
+                            contentScale = ContentScale.FillHeight
                         )
                     }
 
-                    // 作者名字
-                    Text(
-                        modifier = Modifier.padding(horizontal = 16.dp),
-                        text = videoDetail.authorName,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 25.sp,
-                        color = Color(0xfff45a8d)
-                    )
-                }
-                // 视频信息
-                Row(Modifier.padding(vertical = 4.dp)) {
-                    Text(text = "播放: ${videoDetail.watchs} 喜欢: ${videoDetail.likes}")
-                }
-
-                var expand by remember {
-                    mutableStateOf(false)
-                }
-                Crossfade(expand) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 4.dp)
+                    Column(modifier = Modifier
+                        .weight(1f)
+                        .padding(horizontal = 16.dp)
                     ) {
+                        Text(text = it.title, fontWeight = FontWeight.Bold)
                         CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.disabled) {
-                            // TODO: 解析URL
-                            Text(text = videoDetail.description, maxLines = if(expand) 10 else 1)
-                        }
-                        Row(
-                            Modifier
-                                .fillMaxWidth()
-                                .noRippleClickable { expand = !expand }
-                                .padding(horizontal = 8.dp),
-                            horizontalArrangement = Arrangement.End
-                        ) {
-                            IconButton(
-                                modifier = Modifier.size(20.dp),
-                                onClick = { expand = !expand }) {
-                                Icon(
-                                    imageVector = if (it) Icons.Default.ArrowUpward else Icons.Default.ArrowDownward,
-                                    contentDescription = null
-                                )
-                            }
+                            Text(text = "播放: ${it.watchs} 喜欢: ${it.likes}")
                         }
                     }
                 }

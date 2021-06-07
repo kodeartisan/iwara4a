@@ -13,10 +13,21 @@ data class VideoDetail(
     // 视频作者信息
     val authorPic: String,
     val authorName: String,
+
+    // 作者的更多视频
+    val moreVideo: List<MoreVideo>
 ){
     companion object {
         val LOADING = VideoDetail(
-            "","",VideoLink(), "","","","","",""
+            "","",VideoLink(), "","","","","","", emptyList()
         )
     }
 }
+
+data class MoreVideo(
+    val id: String,
+    val title: String,
+    val pic: String,
+    val watchs: String,
+    val likes: String
+)

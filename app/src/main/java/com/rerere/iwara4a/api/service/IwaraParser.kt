@@ -8,6 +8,7 @@ import com.rerere.iwara4a.model.index.MediaType
 import com.rerere.iwara4a.model.index.SubscriptionList
 import com.rerere.iwara4a.model.session.Session
 import com.rerere.iwara4a.model.user.Self
+import com.rerere.iwara4a.model.video.MoreVideo
 import com.rerere.iwara4a.model.video.VideoDetail
 import com.rerere.iwara4a.model.video.VideoLink
 import com.rerere.iwara4a.util.okhttp.await
@@ -253,6 +254,29 @@ class IwaraParser(
                     "https:" + body.getElementsByClass("user-picture").first().select("img")
                         .attr("src")
 
+                // 更多视频
+                val moreVideo = body
+                    .select("div[id=block-views-videos-block-1]")
+                    .select("div[class=view-content]")
+                    .select("div[id~=^node-[A-Za-z0-9]+\$]")
+                    .map {
+                        val id = it.select("a").first().attr("href").let { str ->
+                            str.substring(str.lastIndexOf("/") + 1)
+                        }
+                        val title = it.select("img").first().attr("title")
+                        val pic = "https:" + it.select("img").first().attr("src")
+                        val likes = it.select("div[class=right-icon likes-icon]").first().text()
+                        val watchs = it.select("div[class=left-icon likes-icon]").first().text()
+                        MoreVideo(
+                            id = id,
+                            title = title,
+                            pic = pic,
+                            likes = likes,
+                            watchs = watchs
+                        )
+                    }
+
+
                 Log.i(TAG, "getVideoPageDetail: Result(title=$title, author=$authorId)")
 
                 Response.success(
@@ -265,7 +289,8 @@ class IwaraParser(
                         description = description,
                         authorPic = authorPic,
                         authorName = authorId,
-                        videoLinks = VideoLink()// 稍后再用Retrofit获取
+                        videoLinks = VideoLink(),// 稍后再用Retrofit获取
+                        moreVideo = moreVideo
                     )
                 )
             } catch (exception: Exception) {

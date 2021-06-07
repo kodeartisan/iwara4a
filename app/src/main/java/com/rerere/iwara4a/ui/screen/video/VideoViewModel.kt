@@ -23,6 +23,10 @@ class VideoViewModel @Inject constructor(
     var videoDetail by mutableStateOf(VideoDetail.LOADING)
 
     fun loadVideo(id: String){
+        if(videoDetail != VideoDetail.LOADING){
+            return
+        }
+
         viewModelScope.launch {
             videoId = id
             isLoading = true
