@@ -252,13 +252,13 @@ private fun VideoDescription(videoDetail: VideoDetail) {
             Column(
                 modifier = Modifier
                     .animateContentSize()
-                    .padding(8.dp)
+                    .padding(16.dp)
             ) {
                 // 作者信息
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(5.dp),
+                        .padding(vertical = 5.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     // 作者头像
@@ -276,9 +276,11 @@ private fun VideoDescription(videoDetail: VideoDetail) {
 
                     // 作者名字
                     Text(
+                        modifier = Modifier.padding(horizontal = 16.dp),
                         text = videoDetail.authorName,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 25.sp
+                        fontSize = 25.sp,
+                        color = Color(0xfff45a8d)
                     )
                 }
                 // 视频信息
@@ -290,25 +292,30 @@ private fun VideoDescription(videoDetail: VideoDetail) {
                     mutableStateOf(false)
                 }
                 Crossfade(expand) {
-                    Column(modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 4.dp)
-                        .noRippleClickable { expand = !expand }
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp)
                     ) {
                         CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.disabled) {
-                            Text(text = videoDetail.description, maxLines = if (expand) 10 else 1)
+                            // TODO: 解析URL
+                            Text(text = videoDetail.description, maxLines = if(expand) 10 else 1)
                         }
                         Row(
                             Modifier
                                 .fillMaxWidth()
+                                .noRippleClickable { expand = !expand }
                                 .padding(horizontal = 8.dp),
                             horizontalArrangement = Arrangement.End
                         ) {
-                            Icon(
+                            IconButton(
                                 modifier = Modifier.size(20.dp),
-                                imageVector = if (it) Icons.Default.ArrowUpward else Icons.Default.ArrowDownward,
-                                contentDescription = null
-                            )
+                                onClick = { expand = !expand }) {
+                                Icon(
+                                    imageVector = if (it) Icons.Default.ArrowUpward else Icons.Default.ArrowDownward,
+                                    contentDescription = null
+                                )
+                            }
                         }
                     }
                 }

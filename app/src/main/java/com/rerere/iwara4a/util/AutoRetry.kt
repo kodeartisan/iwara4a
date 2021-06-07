@@ -6,7 +6,7 @@ import com.rerere.iwara4a.api.Response
 
 private const val TAG = "AutoRetry"
 
-suspend fun <T> autoRetry(@IntRange(from = 2) maxRetry: Int = 3, action: suspend () -> Response<T>): Response<T> {
+suspend fun <T> autoRetry(@IntRange(from = 2) maxRetry: Int = 5, action: suspend () -> Response<T>): Response<T> {
     repeat(maxRetry - 1) {
         Log.i(TAG, "autoRetry: try to get response: ${it + 1}/$maxRetry")
         val start = System.currentTimeMillis()
