@@ -5,7 +5,6 @@ import com.rerere.iwara4a.api.IwaraApiImpl
 import com.rerere.iwara4a.api.service.IwaraParser
 import com.rerere.iwara4a.api.service.IwaraService
 import com.rerere.iwara4a.util.okhttp.CookieJarHelper
-import com.rerere.iwara4a.util.okhttp.UserAgentInterceptor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -22,13 +21,15 @@ private const val USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleW
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
+    private const val TIMEOUT_SECONDS = 5L
+
     @Provides
     @Singleton
     fun provideHttpClient(): OkHttpClient = OkHttpClient.Builder()
-        .connectTimeout(10, TimeUnit.SECONDS)
-        .readTimeout(10, TimeUnit.SECONDS)
-        .callTimeout(10, TimeUnit.SECONDS)
-        .addInterceptor(UserAgentInterceptor(USER_AGENT))
+        .connectTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
+        .readTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
+        .callTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
+        //.addInterceptor(UserAgentInterceptor(USER_AGENT))
         .cookieJar(CookieJarHelper())
         .build()
 
@@ -36,7 +37,7 @@ object NetworkModule {
     @Singleton
     fun provideRetrofitClient(okHttpClient: OkHttpClient): Retrofit = Retrofit.Builder()
         .client(okHttpClient)
-        .baseUrl("http://ecchi.iwara.tv/api/")
+        .baseUrl("https://ecchi.iwara.tv/api/")
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 

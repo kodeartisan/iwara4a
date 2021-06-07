@@ -6,6 +6,8 @@ import com.rerere.iwara4a.model.image.ImageDetail
 import com.rerere.iwara4a.model.index.SubscriptionList
 import com.rerere.iwara4a.model.session.Session
 import com.rerere.iwara4a.model.user.Self
+import com.rerere.iwara4a.model.video.VideoDetail
+import com.rerere.iwara4a.util.autoRetry
 
 /**
  * IwaraAPI接口的具体实现
@@ -16,9 +18,36 @@ import com.rerere.iwara4a.model.user.Self
 class IwaraApiImpl(
     private val iwaraParser: IwaraParser,
     private val iwaraService: IwaraService
-): IwaraApi {
-    override suspend fun login(username: String, password: String): Response<Session> = iwaraParser.login(username, password)
-    override suspend fun getSelf(session: Session): Response<Self> = iwaraParser.getSelf(session)
-    override suspend fun getSubscriptionList(session: Session, page: Int): Response<SubscriptionList> = iwaraParser.getSubscriptionList(session,page)
-    override suspend fun getImagePageDetail(session: Session, imageId: String): Response<ImageDetail> = iwaraParser.getImagePageDetail(session, imageId)
+) : IwaraApi {
+    override suspend fun login(username: String, password: String): Response<Session> = autoRetry { iwaraParser.login(username, password) }
+
+    override suspend fun getSelf(session: Session): Response<Self> = autoRetry { iwaraParser.getSelf(session) }
+
+    override suspend fun getSubscriptionList(
+        session: Session,
+        page: Int
+    ): Response<SubscriptionList> = autoRetry { iwaraParser.getSubscriptionList(session, page)}
+
+    override suspend fun getImagePageDetail(
+        session: Session,
+        imageId: String
+    ): Response<ImageDetail> = autoRetry { iwaraParser.getImagePageDetail(session, imageId) }
+
+    override suspend fun getVideoPageDetail(
+        session: Session,
+        videoId: String
+    ): Response<VideoDetail> {
+        val response = autoRetry { iwaraParser.getVideoPageDetail(session, videoId)}
+        return if (response.isSuccess()) {
+            val link = try {
+                iwaraService.getVideoInfo(videoId = videoId)
+            } catch (ex: Exception) {
+                return Response.failed(ex.javaClass.name)
+            }
+            response.read().videoLinks = link
+            response
+        } else {
+            response
+        }
+    }
 }

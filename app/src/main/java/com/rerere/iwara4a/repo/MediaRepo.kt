@@ -13,4 +13,6 @@ class MediaRepo @Inject constructor(
     suspend fun getSubscriptionList(session: Session, @IntRange(from = 1) page: Int): Response<SubscriptionList> = iwaraApi.getSubscriptionList(session, page)
 
     suspend fun getImageDetail(session: Session, imageId: String) = iwaraApi.getImagePageDetail(session, imageId)
+
+    suspend fun getVideoDetail(session: Session, videoId: String) = iwaraApi.getVideoPageDetail(session, videoId)
 }

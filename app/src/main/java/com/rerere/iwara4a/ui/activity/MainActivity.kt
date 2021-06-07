@@ -1,19 +1,20 @@
 package com.rerere.iwara4a.ui.activity
 
+import android.content.res.Configuration
+import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
 import android.view.Window
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.primarySurface
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.core.view.WindowCompat
@@ -29,6 +30,7 @@ import com.google.accompanist.coil.LocalImageLoader
 import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.rerere.iwara4a.ui.local.LocalScreenOrientation
 import com.rerere.iwara4a.ui.screen.image.ImageScreen
 import com.rerere.iwara4a.ui.screen.index.IndexScreen
 import com.rerere.iwara4a.ui.screen.login.LoginScreen
@@ -42,7 +44,9 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     @Inject lateinit var okHttpClient: OkHttpClient
+    var screenOrientation by mutableStateOf(Configuration.ORIENTATION_PORTRAIT)
 
+    @RequiresApi(Build.VERSION_CODES.R)
     @ExperimentalFoundationApi
     @ExperimentalAnimationApi
     @ExperimentalPagerApi
@@ -64,12 +68,18 @@ class MainActivity : ComponentActivity() {
             .build()
 
         setContent {
-            CompositionLocalProvider(LocalImageLoader provides imageLoader) {
+            CompositionLocalProvider(LocalImageLoader provides imageLoader, LocalScreenOrientation provides screenOrientation) {
                 ComposeContent()
             }
         }
     }
 
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        screenOrientation = newConfig.orientation
+    }
+
+    @RequiresApi(Build.VERSION_CODES.R)
     @ExperimentalFoundationApi
     @ExperimentalAnimationApi
     @ExperimentalMaterialApi

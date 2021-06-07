@@ -5,9 +5,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.android.exoplayer2.SimpleExoPlayer
-import com.rerere.iwara4a.AppContext
 import com.rerere.iwara4a.model.session.SessionManager
+import com.rerere.iwara4a.model.video.VideoDetail
 import com.rerere.iwara4a.repo.MediaRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -20,20 +19,23 @@ class VideoViewModel @Inject constructor(
 ): ViewModel() {
     var videoId by mutableStateOf("")
     var isLoading by mutableStateOf(false)
-    var exoPlayer: SimpleExoPlayer = SimpleExoPlayer.Builder(AppContext.instance).build()
+    var error by mutableStateOf(false)
+    var videoDetail by mutableStateOf(VideoDetail.LOADING)
 
     fun loadVideo(id: String){
         viewModelScope.launch {
             videoId = id
             isLoading = true
+            error = false
 
-
+            val response = mediaRepo.getVideoDetail(sessionManager.session, id)
+            if(response.isSuccess()){
+                videoDetail = response.read()
+            }else {
+                error = true
+            }
 
             isLoading = false
         }
-    }
-
-    override fun onCleared() {
-        exoPlayer.release()
     }
 }

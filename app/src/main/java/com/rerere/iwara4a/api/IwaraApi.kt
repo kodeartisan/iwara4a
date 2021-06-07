@@ -5,6 +5,7 @@ import com.rerere.iwara4a.model.image.ImageDetail
 import com.rerere.iwara4a.model.index.SubscriptionList
 import com.rerere.iwara4a.model.session.Session
 import com.rerere.iwara4a.model.user.Self
+import com.rerere.iwara4a.model.video.VideoDetail
 
 /**
  * 提供远程资源API, 通过连接IWARA来获取数据
@@ -44,4 +45,13 @@ interface IwaraApi {
      * @return 图片页面信息
      */
     suspend fun getImagePageDetail(session: Session, imageId: String): Response<ImageDetail>
+
+    /**
+     * 获取视频页面信息
+     *
+     * @param session 登录凭据
+     * @param videoId 视频ID
+     * @return 视频页面信息
+     */
+    suspend fun getVideoPageDetail(session: Session, videoId: String): Response<VideoDetail>
 }
