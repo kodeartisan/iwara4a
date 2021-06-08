@@ -1,7 +1,10 @@
 package com.rerere.iwara4a.api.service
 
 import android.util.Log
+import com.google.gson.Gson
 import com.rerere.iwara4a.api.Response
+import com.rerere.iwara4a.model.flag.FollowResponse
+import com.rerere.iwara4a.model.flag.LikeResponse
 import com.rerere.iwara4a.model.image.ImageDetail
 import com.rerere.iwara4a.model.index.MediaPreview
 import com.rerere.iwara4a.model.index.MediaType
@@ -19,6 +22,7 @@ import okhttp3.FormBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.jsoup.Jsoup
+import java.net.URLDecoder
 
 private const val TAG = "IwaraParser"
 
@@ -33,6 +37,8 @@ private const val TAG = "IwaraParser"
 class IwaraParser(
     private val okHttpClient: OkHttpClient
 ) {
+    private val gson = Gson()
+
     suspend fun login(username: String, password: String): Response<Session> =
         withContext(Dispatchers.IO) {
             okHttpClient.getCookie().clean()
@@ -70,6 +76,7 @@ class IwaraParser(
                     val cookies = okHttpClient.getCookie().filter { it.domain == "iwara.tv" }
                     if (cookies.isNotEmpty()) {
                         val cookie = cookies.first()
+                        Log.i(TAG, "login: Successful login (key:${cookie.name}, value:${cookie.value})")
                         Response.success(Session(cookie.name, cookie.value))
                     } else {
                         Response.failed("no cookie returned")
@@ -275,9 +282,22 @@ class IwaraParser(
                             watchs = watchs
                         )
                     }
+                // 喜欢
+                val likeFlag = body.select("a[href~=^/flag/.+/like/.+\$\$]").first()
+                println(likeFlag)
+                val isLike = likeFlag.attr("href").startsWith("/flag/unflag/")
+                val likeLink = URLDecoder.decode(likeFlag.attr("href").let { it.substring(it.indexOf("/like/") + 6) }, "UTF-8")
 
+                println("Link = $likeLink")
 
+                // 关注UP主
+                val followFlag = body.select("a[href~=^/flag/.+/follow/.+\$\$]").first()
+                val isFollow = followFlag.attr("href").startsWith("/flag/unflag/")
+                val followLink = followFlag.attr("href").let { it.substring(it.indexOf("/follow/") + 8) }
+                
                 Log.i(TAG, "getVideoPageDetail: Result(title=$title, author=$authorId)")
+                Log.i(TAG, "getVideoPageDetail: Like: $isLike LikeAPI: $likeLink")
+                Log.i(TAG, "getVideoPageDetail: Follow: $isFollow FollowAPI: $followLink")
 
                 Response.success(
                     VideoDetail(
@@ -290,7 +310,13 @@ class IwaraParser(
                         authorPic = authorPic,
                         authorName = authorId,
                         videoLinks = VideoLink(),// 稍后再用Retrofit获取
-                        moreVideo = moreVideo
+                        moreVideo = moreVideo,
+
+                        isLike = isLike,
+                        likeLink = likeLink,
+
+                        follow = isFollow,
+                        followLink = followLink
                     )
                 )
             } catch (exception: Exception) {
@@ -299,4 +325,40 @@ class IwaraParser(
                 Response.failed(exception.javaClass.name)
             }
         }
+
+    suspend fun like(session: Session, like: Boolean, likeLink: String): Response<LikeResponse> = withContext(Dispatchers.IO){
+        try {
+            okHttpClient.getCookie().init(session)
+
+            val request = Request.Builder()
+                .url("https://ecchi.iwara.tv/flag/${if(like) "flag" else "unflag"}/like/$likeLink")
+                .post(FormBody.Builder().add("js","true").build())
+                .build()
+            val response = okHttpClient.newCall(request).await()
+            require(response.isSuccessful)
+            val likeResponse = gson.fromJson(response.body?.string() ?: error("empty response"), LikeResponse::class.java)
+            Response.success(likeResponse)
+        }catch (e: Exception){
+            e.printStackTrace()
+            Response.failed(e.javaClass.name)
+        }
+    }
+
+    suspend fun follow(session: Session, follow: Boolean, followLink: String): Response<FollowResponse> = withContext(Dispatchers.IO){
+        try {
+            okHttpClient.getCookie().init(session)
+
+            val request = Request.Builder()
+                .url("https://ecchi.iwara.tv/flag/${if(follow) "flag" else "unflag"}/follow/$followLink")
+                .post(FormBody.Builder().add("js","true").build())
+                .build()
+            val response = okHttpClient.newCall(request).await()
+            require(response.isSuccessful)
+            val followResponse = gson.fromJson(response.body?.string() ?: error("empty response"), FollowResponse::class.java)
+            Response.success(followResponse)
+        }catch (e: Exception){
+            e.printStackTrace()
+            Response.failed(e.javaClass.name)
+        }
+    }
 }

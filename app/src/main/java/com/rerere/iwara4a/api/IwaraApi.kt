@@ -1,6 +1,8 @@
 package com.rerere.iwara4a.api
 
 import androidx.annotation.IntRange
+import com.rerere.iwara4a.model.flag.FollowResponse
+import com.rerere.iwara4a.model.flag.LikeResponse
 import com.rerere.iwara4a.model.image.ImageDetail
 import com.rerere.iwara4a.model.index.SubscriptionList
 import com.rerere.iwara4a.model.session.Session
@@ -35,7 +37,7 @@ interface IwaraApi {
      * @param page 页数
      * @return 订阅列表
      */
-    suspend fun getSubscriptionList(session: Session, @IntRange(from = 1) page: Int): Response<SubscriptionList>
+    suspend fun getSubscriptionList(session: Session, @IntRange(from = 0) page: Int): Response<SubscriptionList>
 
     /**
      * 获取图片页面信息
@@ -54,4 +56,15 @@ interface IwaraApi {
      * @return 视频页面信息
      */
     suspend fun getVideoPageDetail(session: Session, videoId: String): Response<VideoDetail>
+
+    /**
+     * 喜欢某个视频/图片
+     *
+     */
+    suspend fun like(session: Session, like: Boolean, likeLink: String): Response<LikeResponse>
+
+    /**
+     * 关注某人
+     */
+    suspend fun follow(session: Session, follow: Boolean, followLink: String): Response<FollowResponse>
 }

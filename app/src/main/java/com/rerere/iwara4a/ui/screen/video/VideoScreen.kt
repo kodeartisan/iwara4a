@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.res.Configuration
 import android.os.Build
 import android.view.WindowManager
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
@@ -21,9 +22,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowDownward
-import androidx.compose.material.icons.filled.ArrowUpward
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -142,7 +141,7 @@ fun VideoScreen(
                             .weight(1f)
                             .fillMaxWidth()
                     ) {
-                        VideoInfo(navController, videoViewModel.videoDetail)
+                        VideoInfo(navController, videoViewModel, videoViewModel.videoDetail)
                     }
                 }
                 videoViewModel.isLoading -> {
@@ -219,7 +218,11 @@ private fun TabItem(pagerState: PagerState, index: Int, text: String) {
 @ExperimentalAnimationApi
 @ExperimentalPagerApi
 @Composable
-private fun VideoInfo(navController: NavController, videoDetail: VideoDetail) {
+private fun VideoInfo(
+    navController: NavController,
+    videoViewModel: VideoViewModel,
+    videoDetail: VideoDetail
+) {
     val pagerState = rememberPagerState(pageCount = 2, initialPage = 0)
     val coroutineScope = rememberCoroutineScope()
     Column(Modifier.fillMaxSize()) {
@@ -232,6 +235,7 @@ private fun VideoInfo(navController: NavController, videoDetail: VideoDetail) {
             TabItem(pagerState, 0, "简介")
             TabItem(pagerState, 1, "评论")
         }
+        
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -243,7 +247,7 @@ private fun VideoInfo(navController: NavController, videoDetail: VideoDetail) {
                 state = pagerState
             ) {
                 when (it) {
-                    0 -> VideoDescription(navController ,videoDetail)
+                    0 -> VideoDescription(navController, videoViewModel, videoDetail)
                     1 -> CommentPage()
                 }
             }
@@ -253,7 +257,12 @@ private fun VideoInfo(navController: NavController, videoDetail: VideoDetail) {
 
 @ExperimentalMaterialApi
 @Composable
-private fun VideoDescription(navController: NavController, videoDetail: VideoDetail) {
+private fun VideoDescription(
+    navController: NavController,
+    videoViewModel: VideoViewModel,
+    videoDetail: VideoDetail
+) {
+    val context = LocalContext.current
     LazyColumn(modifier = Modifier.fillMaxSize()) {
         item {
             // 视频简介
@@ -291,12 +300,51 @@ private fun VideoDescription(navController: NavController, videoDetail: VideoDet
                             fontSize = 25.sp,
                             color = Color(0xfff45a8d)
                         )
+
+                        // 关注
+                        Box(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(4.dp))
+                                .clickable {
+                                    videoViewModel.handleFollow { action, success ->
+                                        if (action) {
+                                            Toast
+                                                .makeText(
+                                                    context,
+                                                    if (success) "关注了该UP主！ ヾ(≧▽≦*)o" else "关注失败",
+                                                    Toast.LENGTH_SHORT
+                                                )
+                                                .show()
+                                        } else {
+                                            Toast
+                                                .makeText(
+                                                    context,
+                                                    if (success) "已取消关注" else "取消关注失败",
+                                                    Toast.LENGTH_SHORT
+                                                )
+                                                .show()
+                                        }
+                                    }
+                                }
+                                .background(
+                                    if (videoDetail.follow) Color.LightGray else Color(
+                                        0xfff45a8d
+                                    )
+                                )
+                                .padding(4.dp),
+                        ) {
+                            Text(
+                                text = if (videoDetail.follow) "已关注" else "+ 关注",
+                                color = if (videoDetail.follow) Color.Black else Color.White
+                            )
+                        }
                     }
                     // 视频信息
                     Row(Modifier.padding(vertical = 4.dp)) {
                         Text(text = "播放: ${videoDetail.watchs} 喜欢: ${videoDetail.likes}")
                     }
 
+                    // 视频介绍
                     var expand by remember {
                         mutableStateOf(false)
                     }
@@ -331,6 +379,73 @@ private fun VideoDescription(navController: NavController, videoDetail: VideoDet
                             }
                         }
                     }
+
+                    // 操作按钮
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(4.dp)
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .weight(1f)
+                                .clickable {
+                                    videoViewModel.handleLike { action, success ->
+                                        if (action) {
+                                            Toast
+                                                .makeText(
+                                                    context,
+                                                    if (success) "点赞大成功！ ヾ(≧▽≦*)o" else "点赞失败",
+                                                    Toast.LENGTH_SHORT
+                                                )
+                                                .show()
+                                        } else {
+                                            Toast
+                                                .makeText(
+                                                    context,
+                                                    if (success) "已取消点赞" else "取消点赞失败",
+                                                    Toast.LENGTH_SHORT
+                                                )
+                                                .show()
+                                        }
+                                    }
+                                }, horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Icon(
+                                imageVector = if (videoDetail.isLike) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                                contentDescription = null,
+                                tint = if (videoDetail.isLike) Color(0xfff45a8d) else Color.LightGray
+                            )
+                            Text(text = if (videoDetail.isLike) "已喜欢" else "喜欢")
+                        }
+
+                        Column(
+                            modifier = Modifier
+                                .weight(1f)
+                                .clickable { }, horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Icon(Icons.Default.Subscriptions, null)
+                            Text(text = "收藏")
+                        }
+
+                        Column(
+                            modifier = Modifier
+                                .weight(1f)
+                                .clickable { }, horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Icon(Icons.Default.Share, null)
+                            Text(text = "分享")
+                        }
+
+                        Column(
+                            modifier = Modifier
+                                .weight(1f)
+                                .clickable { }, horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Icon(Icons.Default.Download, null)
+                            Text(text = "下载")
+                        }
+                    }
                 }
             }
         }
@@ -359,9 +474,11 @@ private fun VideoDescription(navController: NavController, videoDetail: VideoDet
                         .padding(8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Box(modifier = Modifier
-                        .height(60.dp)
-                        .clip(RoundedCornerShape(5.dp))) {
+                    Box(
+                        modifier = Modifier
+                            .height(60.dp)
+                            .clip(RoundedCornerShape(5.dp))
+                    ) {
                         Image(
                             modifier = Modifier.fillMaxHeight(),
                             painter = rememberCoilPainter(it.pic),
@@ -370,9 +487,10 @@ private fun VideoDescription(navController: NavController, videoDetail: VideoDet
                         )
                     }
 
-                    Column(modifier = Modifier
-                        .weight(1f)
-                        .padding(horizontal = 16.dp)
+                    Column(
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(horizontal = 16.dp)
                     ) {
                         Text(text = it.title, fontWeight = FontWeight.Bold)
                         CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.disabled) {

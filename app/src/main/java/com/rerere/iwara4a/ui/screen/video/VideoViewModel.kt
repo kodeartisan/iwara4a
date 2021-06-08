@@ -42,4 +42,26 @@ class VideoViewModel @Inject constructor(
             isLoading = false
         }
     }
+
+    fun handleLike(result: (action: Boolean, success: Boolean) -> Unit){
+        val action = !videoDetail.isLike
+        viewModelScope.launch {
+            val response = mediaRepo.like(sessionManager.session, action, videoDetail.likeLink)
+            if(response.isSuccess()){
+                videoDetail = videoDetail.copy(isLike = response.read().flagStatus == "flagged")
+            }
+            result(action, response.isSuccess())
+        }
+    }
+
+    fun handleFollow(result: (action: Boolean, success: Boolean) -> Unit){
+        val action = !videoDetail.follow
+        viewModelScope.launch {
+            val response = mediaRepo.follow(sessionManager.session, action, videoDetail.followLink)
+            if(response.isSuccess()){
+                videoDetail = videoDetail.copy(follow = response.read().flagStatus == "flagged")
+            }
+            result(action, response.isSuccess())
+        }
+    }
 }

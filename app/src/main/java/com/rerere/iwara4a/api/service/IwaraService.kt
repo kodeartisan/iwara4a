@@ -8,6 +8,6 @@ import retrofit2.http.Path
  * 使用Retrofit直接获取 RESTFUL API 资源
  */
 interface IwaraService {
-    @POST("video/{videoId}")
+    @POST("api/video/{videoId}")
     suspend fun getVideoInfo(@Path("videoId") videoId: String): VideoLink
 }

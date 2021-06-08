@@ -15,11 +15,33 @@ data class VideoDetail(
     val authorName: String,
 
     // 作者的更多视频
-    val moreVideo: List<MoreVideo>
+    val moreVideo: List<MoreVideo>,
+
+    // 是否关注
+    val follow: Boolean,
+    // 关注链接
+    val followLink: String,
+
+    // 是否喜欢
+    var isLike: Boolean,
+    val likeLink: String
 ){
     companion object {
         val LOADING = VideoDetail(
-            "","",VideoLink(), "","","","","","", emptyList()
+            "",
+            "",
+            VideoLink(),
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            emptyList(),
+            true,
+            "",
+            true,
+            ""
         )
     }
 }

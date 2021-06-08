@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
+import androidx.paging.cachedIn
 import com.rerere.iwara4a.api.paging.SubscriptionsSource
 import com.rerere.iwara4a.event.LoginEvent
 import com.rerere.iwara4a.model.session.SessionManager
@@ -42,7 +43,7 @@ class IndexViewModel @Inject constructor(
             sessionManager,
             mediaRepo
         )
-    }.flow
+    }.flow.cachedIn(viewModelScope)
 
     init {
         registerListener()
