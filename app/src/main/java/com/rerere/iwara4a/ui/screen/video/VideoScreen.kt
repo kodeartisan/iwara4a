@@ -36,17 +36,24 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import androidx.paging.LoadState
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.items
 import com.google.accompanist.coil.rememberCoilPainter
-import com.google.accompanist.insets.navigationBarsPadding
+import com.google.accompanist.insets.navigationBarsWithImePadding
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.rerere.iwara4a.R
 import com.rerere.iwara4a.model.video.VideoDetail
 import com.rerere.iwara4a.ui.local.LocalScreenOrientation
+import com.rerere.iwara4a.ui.public.CommentItem
 import com.rerere.iwara4a.ui.public.ExoPlayer
 import com.rerere.iwara4a.ui.public.FullScreenTopBar
+import com.rerere.iwara4a.ui.theme.PINK
 import com.rerere.iwara4a.util.noRippleClickable
 import kotlinx.coroutines.launch
 
@@ -117,7 +124,7 @@ fun VideoScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .navigationBarsPadding()
+                .navigationBarsWithImePadding()
         ) {
             // Player
             ExoPlayer(
@@ -235,7 +242,7 @@ private fun VideoInfo(
             TabItem(pagerState, 0, "简介")
             TabItem(pagerState, 1, "评论")
         }
-        
+
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -248,7 +255,7 @@ private fun VideoInfo(
             ) {
                 when (it) {
                     0 -> VideoDescription(navController, videoViewModel, videoDetail)
-                    1 -> CommentPage()
+                    1 -> CommentPage(videoViewModel)
                 }
             }
         }
@@ -298,7 +305,7 @@ private fun VideoDescription(
                             text = videoDetail.authorName,
                             fontWeight = FontWeight.Bold,
                             fontSize = 25.sp,
-                            color = Color(0xfff45a8d)
+                            color = PINK
                         )
 
                         // 关注
@@ -504,22 +511,92 @@ private fun VideoDescription(
 }
 
 @Composable
-private fun CommentPage() {
-    LazyColumn(modifier = Modifier.fillMaxSize()) {
-        items(100) {
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(150.dp)
-                    .padding(16.dp), elevation = 4.dp
-            ) {
+private fun CommentPage(videoViewModel: VideoViewModel) {
+    val pager = videoViewModel.commentPager.collectAsLazyPagingItems()
+    val state = rememberSwipeRefreshState(pager.loadState.refresh == LoadState.Loading)
+    if (pager.loadState.refresh is LoadState.Error) {
+        Box(modifier = Modifier
+            .fillMaxSize()
+            .noRippleClickable { pager.retry() }, contentAlignment = Alignment.Center
+        ) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Box(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .padding(4.dp)
+                        .size(160.dp)
+                        .padding(10.dp)
+                        .clip(CircleShape)
                 ) {
-                    Text(text = "哈哈哈: $it", fontWeight = FontWeight.Bold)
+                    Image(
+                        modifier = Modifier.fillMaxSize(),
+                        painter = painterResource(R.drawable.anime_4),
+                        contentDescription = null
+                    )
                 }
+                Text(text = "加载失败，点击重试~ （土豆服务器日常）", fontWeight = FontWeight.Bold)
+            }
+        }
+    } else {
+        Column(Modifier.fillMaxSize()) {
+            SwipeRefresh(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                state = state,
+                onRefresh = { pager.refresh() }) {
+                LazyColumn(modifier = Modifier.fillMaxSize()) {
+                    items(pager) {
+                        CommentItem(it!!)
+                    }
+
+                    when (pager.loadState.append) {
+                        LoadState.Loading -> {
+                            item {
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(16.dp),
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    CircularProgressIndicator()
+                                    Text(text = "加载中", fontWeight = FontWeight.Bold)
+                                }
+                            }
+                        }
+                        is LoadState.Error -> {
+
+                        }
+                    }
+                }
+            }
+            ReplyBox()
+        }
+    }
+}
+
+@Composable
+fun ReplyBox() {
+    var content by remember {
+        mutableStateOf("")
+    }
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+    ) {
+        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            TextField(
+                modifier = Modifier.weight(1f),
+                value = content,
+                onValueChange = { content = it },
+                placeholder = {
+                    Text(text = "回复请注意礼仪哦~")
+                },
+                maxLines = 3,
+                label = {
+                    Text(text = "评论视频")
+                }
+            )
+            IconButton(onClick = { /*TODO*/ }) {
+                Icon(Icons.Default.EmojiEmotions, null)
             }
         }
     }

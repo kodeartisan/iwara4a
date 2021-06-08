@@ -2,9 +2,11 @@ package com.rerere.iwara4a.api
 
 import com.rerere.iwara4a.api.service.IwaraParser
 import com.rerere.iwara4a.api.service.IwaraService
+import com.rerere.iwara4a.model.comment.CommentList
 import com.rerere.iwara4a.model.flag.FollowResponse
 import com.rerere.iwara4a.model.flag.LikeResponse
 import com.rerere.iwara4a.model.image.ImageDetail
+import com.rerere.iwara4a.model.index.MediaType
 import com.rerere.iwara4a.model.index.SubscriptionList
 import com.rerere.iwara4a.model.session.Session
 import com.rerere.iwara4a.model.user.Self
@@ -68,4 +70,18 @@ class IwaraApiImpl(
         follow: Boolean,
         followLink: String
     ): Response<FollowResponse> = iwaraParser.follow(session, follow, followLink)
+
+    override suspend fun getCommentList(
+        session: Session,
+        mediaType: MediaType,
+        mediaId: String,
+        page: Int
+    ): Response<CommentList> = autoRetry {
+        iwaraParser.getCommentList(
+            session,
+            mediaType,
+            mediaId,
+            page
+        )
+    }
 }

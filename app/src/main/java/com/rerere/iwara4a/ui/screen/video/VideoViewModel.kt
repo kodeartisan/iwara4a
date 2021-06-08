@@ -5,6 +5,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.cachedIn
+import com.rerere.iwara4a.api.paging.CommentSource
+import com.rerere.iwara4a.model.index.MediaType
 import com.rerere.iwara4a.model.session.SessionManager
 import com.rerere.iwara4a.model.video.VideoDetail
 import com.rerere.iwara4a.repo.MediaRepo
@@ -21,6 +26,22 @@ class VideoViewModel @Inject constructor(
     var isLoading by mutableStateOf(false)
     var error by mutableStateOf(false)
     var videoDetail by mutableStateOf(VideoDetail.LOADING)
+
+    val commentPager by lazy {
+        Pager(
+            config = PagingConfig(
+                pageSize = 30,
+                initialLoadSize = 30
+            )
+        ) {
+            CommentSource(
+                sessionManager = sessionManager,
+                mediaRepo = mediaRepo,
+                mediaType = MediaType.VIDEO,
+                mediaId = videoDetail.id
+            )
+        }.flow.cachedIn(viewModelScope)
+    }
 
     fun loadVideo(id: String){
         if(videoDetail != VideoDetail.LOADING){

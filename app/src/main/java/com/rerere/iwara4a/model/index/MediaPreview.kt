@@ -20,7 +20,7 @@ data class MediaPreview(
     val mediaId: String
 )
 
-enum class MediaType {
-    VIDEO,
-    IMAGE
+enum class MediaType(val value: String) {
+    VIDEO("videos"),
+    IMAGE("images")
 }

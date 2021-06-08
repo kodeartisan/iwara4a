@@ -3,6 +3,7 @@ package com.rerere.iwara4a.repo
 import androidx.annotation.IntRange
 import com.rerere.iwara4a.api.IwaraApi
 import com.rerere.iwara4a.api.Response
+import com.rerere.iwara4a.model.index.MediaType
 import com.rerere.iwara4a.model.index.SubscriptionList
 import com.rerere.iwara4a.model.session.Session
 import javax.inject.Inject
@@ -25,4 +26,6 @@ class MediaRepo @Inject constructor(
         iwaraApi.like(session, like, link)
 
     suspend fun follow(session: Session, follow: Boolean, link: String) = iwaraApi.follow(session, follow, link)
+
+    suspend fun loadComment(session: Session, mediaType: MediaType, mediaId: String, page: Int) = iwaraApi.getCommentList(session, mediaType, mediaId, page)
 }
