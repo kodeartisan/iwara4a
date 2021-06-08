@@ -6,17 +6,15 @@ import com.rerere.iwara4a.api.Response
 import com.rerere.iwara4a.model.comment.Comment
 import com.rerere.iwara4a.model.comment.CommentList
 import com.rerere.iwara4a.model.comment.CommentPosterType
+import com.rerere.iwara4a.model.detail.image.ImageDetail
+import com.rerere.iwara4a.model.detail.video.MoreVideo
+import com.rerere.iwara4a.model.detail.video.VideoDetail
+import com.rerere.iwara4a.model.detail.video.VideoLink
 import com.rerere.iwara4a.model.flag.FollowResponse
 import com.rerere.iwara4a.model.flag.LikeResponse
-import com.rerere.iwara4a.model.image.ImageDetail
-import com.rerere.iwara4a.model.index.MediaPreview
-import com.rerere.iwara4a.model.index.MediaType
-import com.rerere.iwara4a.model.index.SubscriptionList
+import com.rerere.iwara4a.model.index.*
 import com.rerere.iwara4a.model.session.Session
 import com.rerere.iwara4a.model.user.Self
-import com.rerere.iwara4a.model.video.MoreVideo
-import com.rerere.iwara4a.model.video.VideoDetail
-import com.rerere.iwara4a.model.video.VideoLink
 import com.rerere.iwara4a.util.okhttp.await
 import com.rerere.iwara4a.util.okhttp.getCookie
 import kotlinx.coroutines.Dispatchers
@@ -262,7 +260,7 @@ class IwaraParser(
                 // 视频描述
                 val description =
                     body.select("div[class=field field-name-body field-type-text-with-summary field-label-hidden]")
-                        .first().text()
+                        .first()?.text() ?: ""
                 val authorId = body.getElementsByClass("username").first().text().trim()
                 val authorPic =
                     "https:" + body.getElementsByClass("user-picture").first().select("img")
@@ -449,7 +447,7 @@ class IwaraParser(
             // ###########################################################################
             // (用JSOUP解析网页真痛苦)
 
-            val total = commentDocu.select("h2[class=title]").first().text().trim().split(" ")[0].toInt()
+            val total = (commentDocu.select("h2[class=title]").first()?.text() ?: " 0 评论 ").trim().split(" ")[0].toInt()
             val lastPage = commentDocu.select("li[class~=^pager-.+\$]").last()?.text()?.toInt() ?: 1
             val hasNext = lastPage != (page + 1)
             val comments = parseAsComments(commentDocu)
@@ -467,6 +465,67 @@ class IwaraParser(
         } catch (ex: Exception) {
             ex.printStackTrace()
             Response.failed(ex.javaClass.name)
+        }
+    }
+
+    suspend fun getMediaList(session: Session, mediaType: MediaType, page: Int, sort: SortType, filter: List<String>): Response<MediaList> = withContext(Dispatchers.IO){
+        try {
+            Log.i(TAG, "getMediaList: Start loading media list (type:${mediaType.value}, page: $page, sort: $sort)")
+            okHttpClient.getCookie().init(session)
+
+            fun collectFilters(): String {
+                var index = 0
+                return filter.joinToString(separator = "&") {
+                    "f[${index++}]=$it"
+                }
+            }
+            val filters = collectFilters()
+
+            val request = Request.Builder()
+                .url("https://ecchi.iwara.tv/${mediaType.value}?page=$page&sort=${sort.value}" + if(filter.isNotEmpty()) "&${filters}" else "")
+                .get()
+                .build()
+            val response = okHttpClient.newCall(request).await()
+            require(response.isSuccessful)
+
+            val body = Jsoup.parse(response.body?.string() ?: error("empty body")).body()
+            val elements = body.select("div[id~=^node-[A-Za-z0-9]+\$]")
+
+            val previewList: List<MediaPreview> = elements?.map {
+                val title = it.getElementsByClass("title").text()
+                val author = it.getElementsByClass("username").text()
+                val pic =
+                    "https:" + it.getElementsByClass("field-item even")[0].child(0).child(0)
+                        .attr("src")
+                val likes = it.getElementsByClass("right-icon").text()
+                val watchs = it.getElementsByClass("left-icon").text()
+                val link = it.getElementsByClass("field-item even")[0].child(0).attr("href")
+                val mediaId = link.substring(link.lastIndexOf("/") + 1)
+                val type = if (link.startsWith("/video")) MediaType.VIDEO else MediaType.IMAGE
+
+                MediaPreview(
+                    title = title,
+                    author = author,
+                    previewPic = pic,
+                    likes = likes,
+                    watchs = watchs,
+                    mediaId = mediaId,
+                    type = type
+                )
+            } ?: error("empty elements")
+
+            val hasNextPage = body.select("ul[class=pager]").first().select("li[class=pager-next]").any()
+
+            Response.success(
+                MediaList(
+                    currentPage = page,
+                    hasNext = hasNextPage,
+                    mediaList = previewList
+                )
+            )
+        }catch (e: Exception){
+            e.printStackTrace()
+            Response.failed(e.javaClass.name)
         }
     }
 }

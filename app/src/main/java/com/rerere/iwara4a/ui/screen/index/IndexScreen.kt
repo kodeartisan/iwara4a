@@ -50,19 +50,19 @@ fun IndexScreen(navController: NavController, indexViewModel: IndexViewModel = h
     ) {
         HorizontalPager(
             modifier = Modifier
-            .fillMaxSize()
-            .padding(it),
+                .fillMaxSize()
+                .padding(it),
             state = pagerState
         ) {
             when (it) {
                 0 -> {
-                    VideoListPage(indexViewModel)
+                    VideoListPage(navController, indexViewModel)
                 }
                 1 -> {
                     SubPage(navController, indexViewModel)
                 }
                 2 -> {
-                    ImageListPage(indexViewModel)
+                    ImageListPage(navController, indexViewModel)
                 }
             }
         }
@@ -82,8 +82,14 @@ private fun TopBar(scaffoldState: ScaffoldState, indexViewModel: IndexViewModel)
                     scaffoldState.drawerState.open()
                 }
             }) {
-                Box(modifier = Modifier.size(30.dp).clip(CircleShape)){
-                    Image(modifier = Modifier.fillMaxSize(), painter = rememberCoilPainter(indexViewModel.self.profilePic), contentDescription = null)
+                Box(modifier = Modifier
+                    .size(30.dp)
+                    .clip(CircleShape)) {
+                    Image(
+                        modifier = Modifier.fillMaxSize(),
+                        painter = rememberCoilPainter(indexViewModel.self.profilePic),
+                        contentDescription = null
+                    )
                 }
             }
         }

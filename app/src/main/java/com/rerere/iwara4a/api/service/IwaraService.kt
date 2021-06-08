@@ -1,6 +1,6 @@
 package com.rerere.iwara4a.api.service
 
-import com.rerere.iwara4a.model.video.VideoLink
+import com.rerere.iwara4a.model.detail.video.VideoLink
 import retrofit2.http.POST
 import retrofit2.http.Path
 

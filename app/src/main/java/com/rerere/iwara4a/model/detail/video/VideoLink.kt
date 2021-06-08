@@ -1,4 +1,4 @@
-package com.rerere.iwara4a.model.video
+package com.rerere.iwara4a.model.detail.video
 
 
 import com.google.gson.annotations.SerializedName

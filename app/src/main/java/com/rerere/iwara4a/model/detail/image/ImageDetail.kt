@@ -1,4 +1,4 @@
-package com.rerere.iwara4a.model.image
+package com.rerere.iwara4a.model.detail.image
 
 data class ImageDetail(
     val id: String,

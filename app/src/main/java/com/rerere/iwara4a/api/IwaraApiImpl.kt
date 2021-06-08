@@ -3,14 +3,16 @@ package com.rerere.iwara4a.api
 import com.rerere.iwara4a.api.service.IwaraParser
 import com.rerere.iwara4a.api.service.IwaraService
 import com.rerere.iwara4a.model.comment.CommentList
+import com.rerere.iwara4a.model.detail.image.ImageDetail
+import com.rerere.iwara4a.model.detail.video.VideoDetail
 import com.rerere.iwara4a.model.flag.FollowResponse
 import com.rerere.iwara4a.model.flag.LikeResponse
-import com.rerere.iwara4a.model.image.ImageDetail
+import com.rerere.iwara4a.model.index.MediaList
 import com.rerere.iwara4a.model.index.MediaType
+import com.rerere.iwara4a.model.index.SortType
 import com.rerere.iwara4a.model.index.SubscriptionList
 import com.rerere.iwara4a.model.session.Session
 import com.rerere.iwara4a.model.user.Self
-import com.rerere.iwara4a.model.video.VideoDetail
 import com.rerere.iwara4a.util.autoRetry
 import okhttp3.OkHttpClient
 
@@ -82,6 +84,22 @@ class IwaraApiImpl(
             mediaType,
             mediaId,
             page
+        )
+    }
+
+    override suspend fun getMediaList(
+        session: Session,
+        mediaType: MediaType,
+        page: Int,
+        sort: SortType,
+        filter: List<String>
+    ): Response<MediaList> = autoRetry {
+        iwaraParser.getMediaList(
+            session,
+            mediaType,
+            page,
+            sort,
+            filter
         )
     }
 }

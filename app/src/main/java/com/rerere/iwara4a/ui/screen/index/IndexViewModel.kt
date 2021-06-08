@@ -8,8 +8,12 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
+import com.rerere.iwara4a.api.paging.MediaSource
 import com.rerere.iwara4a.api.paging.SubscriptionsSource
 import com.rerere.iwara4a.event.LoginEvent
+import com.rerere.iwara4a.model.index.MediaQueryParam
+import com.rerere.iwara4a.model.index.MediaType
+import com.rerere.iwara4a.model.index.SortType
 import com.rerere.iwara4a.model.session.SessionManager
 import com.rerere.iwara4a.model.user.Self
 import com.rerere.iwara4a.repo.MediaRepo
@@ -33,17 +37,49 @@ class IndexViewModel @Inject constructor(
     var email by mutableStateOf("")
     var loadingSelf by mutableStateOf(false)
 
-    val subscriptionPager = Pager(
-        config = PagingConfig(
-            pageSize = 32,
-            initialLoadSize = 32
-        )
-    ){
-        SubscriptionsSource(
-            sessionManager,
-            mediaRepo
-        )
-    }.flow.cachedIn(viewModelScope)
+    // Pager: 视频列表
+    var videoQueryParam: MediaQueryParam by mutableStateOf(MediaQueryParam(SortType.DATE, emptyList()))
+    val videoPager by lazy {
+        Pager(config = PagingConfig(pageSize = 32, initialLoadSize = 32))
+        {
+            MediaSource(
+                MediaType.VIDEO,
+                mediaRepo,
+                sessionManager,
+                videoQueryParam
+            )
+        }.flow.cachedIn(viewModelScope)
+    }
+
+    // Pager: 订阅列表
+    val subscriptionPager by lazy {
+        Pager(
+            config = PagingConfig(
+                pageSize = 32,
+                initialLoadSize = 32,
+                prefetchDistance = 8
+            )
+        ) {
+            SubscriptionsSource(
+                sessionManager,
+                mediaRepo
+            )
+        }.flow.cachedIn(viewModelScope)
+    }
+
+    // 图片列表
+    var imageQueryParam: MediaQueryParam by mutableStateOf(MediaQueryParam(SortType.DATE, emptyList()))
+    val imagePager by lazy {
+        Pager(config = PagingConfig(pageSize = 32, initialLoadSize = 32, prefetchDistance = 8))
+        {
+            MediaSource(
+                MediaType.IMAGE,
+                mediaRepo,
+                sessionManager,
+                imageQueryParam
+            )
+        }.flow.cachedIn(viewModelScope)
+    }
 
     init {
         registerListener()

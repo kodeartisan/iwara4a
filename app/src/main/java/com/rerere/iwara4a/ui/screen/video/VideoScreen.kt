@@ -48,7 +48,7 @@ import com.google.accompanist.pager.rememberPagerState
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.rerere.iwara4a.R
-import com.rerere.iwara4a.model.video.VideoDetail
+import com.rerere.iwara4a.model.detail.video.VideoDetail
 import com.rerere.iwara4a.ui.local.LocalScreenOrientation
 import com.rerere.iwara4a.ui.public.CommentItem
 import com.rerere.iwara4a.ui.public.ExoPlayer
@@ -515,9 +515,10 @@ private fun CommentPage(videoViewModel: VideoViewModel) {
     val pager = videoViewModel.commentPager.collectAsLazyPagingItems()
     val state = rememberSwipeRefreshState(pager.loadState.refresh == LoadState.Loading)
     if (pager.loadState.refresh is LoadState.Error) {
-        Box(modifier = Modifier
-            .fillMaxSize()
-            .noRippleClickable { pager.retry() }, contentAlignment = Alignment.Center
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .noRippleClickable { pager.retry() }, contentAlignment = Alignment.Center
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Box(
@@ -544,6 +545,16 @@ private fun CommentPage(videoViewModel: VideoViewModel) {
                 state = state,
                 onRefresh = { pager.refresh() }) {
                 LazyColumn(modifier = Modifier.fillMaxSize()) {
+                    if (pager.itemCount == 0 && pager.loadState.refresh is LoadState.NotLoading) {
+                        item { 
+                            Box(modifier = Modifier
+                                .fillMaxWidth()
+                                .height(150.dp), contentAlignment = Alignment.Center){
+                                Text(text = "暂无评论", fontWeight = FontWeight.Bold)
+                            }
+                        }
+                    }
+
                     items(pager) {
                         CommentItem(it!!)
                     }

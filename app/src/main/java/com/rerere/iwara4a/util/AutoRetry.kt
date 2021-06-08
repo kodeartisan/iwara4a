@@ -13,7 +13,7 @@ private const val TAG = "AutoRetry"
  * @param action 重试体
  * @return 最终响应
  */
-suspend fun <T> autoRetry(@IntRange(from = 2) maxRetry: Int = 7, action: suspend () -> Response<T>): Response<T> {
+suspend fun <T> autoRetry(@IntRange(from = 2) maxRetry: Int = 15, action: suspend () -> Response<T>): Response<T> {
     repeat(maxRetry - 1) {
         Log.i(TAG, "autoRetry: Try to get response: ${it + 1}/$maxRetry")
         val start = System.currentTimeMillis()

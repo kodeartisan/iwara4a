@@ -23,7 +23,7 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import com.rerere.iwara4a.R
-import com.rerere.iwara4a.model.image.ImageDetail
+import com.rerere.iwara4a.model.detail.image.ImageDetail
 import com.rerere.iwara4a.ui.public.FullScreenTopBar
 import com.rerere.iwara4a.util.noRippleClickable
 

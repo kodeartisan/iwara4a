@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.rerere.iwara4a.model.image.ImageDetail
+import com.rerere.iwara4a.model.detail.image.ImageDetail
 import com.rerere.iwara4a.model.session.SessionManager
 import com.rerere.iwara4a.repo.MediaRepo
 import dagger.hilt.android.lifecycle.HiltViewModel

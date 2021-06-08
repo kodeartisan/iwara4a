@@ -1,4 +1,4 @@
-package com.rerere.iwara4a.model.video
+package com.rerere.iwara4a.model.detail.video
 
 data class VideoDetail(
     // 视频信息

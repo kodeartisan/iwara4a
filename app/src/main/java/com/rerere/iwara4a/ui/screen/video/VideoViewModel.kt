@@ -9,9 +9,9 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
 import com.rerere.iwara4a.api.paging.CommentSource
+import com.rerere.iwara4a.model.detail.video.VideoDetail
 import com.rerere.iwara4a.model.index.MediaType
 import com.rerere.iwara4a.model.session.SessionManager
-import com.rerere.iwara4a.model.video.VideoDetail
 import com.rerere.iwara4a.repo.MediaRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
