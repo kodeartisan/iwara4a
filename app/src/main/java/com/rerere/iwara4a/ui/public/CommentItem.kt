@@ -17,16 +17,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.google.accompanist.coil.rememberCoilPainter
 import com.rerere.iwara4a.model.comment.Comment
 import com.rerere.iwara4a.model.comment.CommentPosterType
 import com.rerere.iwara4a.ui.theme.PINK
+import com.rerere.iwara4a.util.noRippleClickable
 
 @Composable
-fun CommentItem(comment: Comment) {
+fun CommentItem(navController: NavController, comment: Comment) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -45,7 +46,11 @@ fun CommentItem(comment: Comment) {
                         .clip(CircleShape)
                 ) {
                     Image(
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .noRippleClickable {
+                                navController.navigate("user/${comment.authorId}")
+                            },
                         painter = rememberCoilPainter(comment.authorPic),
                         contentDescription = null
                     )
@@ -53,7 +58,9 @@ fun CommentItem(comment: Comment) {
                 Column(Modifier.padding(horizontal = 8.dp)) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
-                            modifier = Modifier.padding(end = 8.dp),
+                            modifier = Modifier.padding(end = 8.dp).noRippleClickable {
+                                navController.navigate("user/${comment.authorId}")
+                            },
                             text = comment.authorId,
                             fontWeight = FontWeight.Bold,
                             fontSize = 19.sp
@@ -95,24 +102,9 @@ fun CommentItem(comment: Comment) {
                     .padding(start = 8.dp)
             ) {
                 comment.reply.forEach {
-                    CommentItem(it)
+                    CommentItem(navController, it)
                 }
             }
         }
     }
-}
-
-@Composable
-@Preview(showBackground = true)
-fun CommentPreview() {
-    CommentItem(
-        Comment(
-            "作者名字",
-            "",
-            CommentPosterType.OWNER,
-            "wuigfb83oreyvfer8yvfu2fvb8eryvf23vfe3巨鳄风暴发布播放吧",
-            "2021-21-21",
-            emptyList()
-        )
-    )
 }

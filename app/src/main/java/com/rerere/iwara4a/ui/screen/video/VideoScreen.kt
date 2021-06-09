@@ -8,7 +8,6 @@ import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.annotation.RequiresApi
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.animateContentSize
@@ -43,7 +42,6 @@ import com.google.accompanist.coil.rememberCoilPainter
 import com.google.accompanist.insets.navigationBarsWithImePadding
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
-import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
@@ -53,9 +51,9 @@ import com.rerere.iwara4a.ui.local.LocalScreenOrientation
 import com.rerere.iwara4a.ui.public.CommentItem
 import com.rerere.iwara4a.ui.public.ExoPlayer
 import com.rerere.iwara4a.ui.public.FullScreenTopBar
+import com.rerere.iwara4a.ui.public.TabItem
 import com.rerere.iwara4a.ui.theme.PINK
 import com.rerere.iwara4a.util.noRippleClickable
-import kotlinx.coroutines.launch
 
 @ExperimentalMaterialApi
 @ExperimentalAnimationApi
@@ -192,35 +190,6 @@ fun VideoScreen(
     }
 }
 
-@ExperimentalAnimationApi
-@ExperimentalPagerApi
-@Composable
-private fun TabItem(pagerState: PagerState, index: Int, text: String) {
-    val coroutineScope = rememberCoroutineScope()
-    val selected = pagerState.currentPage == index
-    Box(
-        modifier = Modifier
-            .noRippleClickable { coroutineScope.launch { pagerState.animateScrollToPage(index) } }
-            .padding(horizontal = 16.dp, vertical = 4.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            CompositionLocalProvider(LocalContentAlpha provides if (selected) ContentAlpha.high else ContentAlpha.disabled) {
-                Text(text = text)
-            }
-
-            AnimatedVisibility(selected) {
-                Spacer(
-                    modifier = Modifier
-                        .width(32.dp)
-                        .height(1.dp)
-                        .background(MaterialTheme.colors.onBackground)
-                )
-            }
-        }
-    }
-}
-
 @ExperimentalMaterialApi
 @ExperimentalAnimationApi
 @ExperimentalPagerApi
@@ -255,7 +224,7 @@ private fun VideoInfo(
             ) {
                 when (it) {
                     0 -> VideoDescription(navController, videoViewModel, videoDetail)
-                    1 -> CommentPage(videoViewModel)
+                    1 -> CommentPage(navController, videoViewModel)
                 }
             }
         }
@@ -291,6 +260,9 @@ private fun VideoDescription(
                             modifier = Modifier
                                 .size(40.dp)
                                 .clip(CircleShape)
+                                .noRippleClickable {
+                                    navController.navigate("user/${videoDetail.authorName}")
+                                }
                         ) {
                             Image(
                                 modifier = Modifier.fillMaxSize(),
@@ -301,7 +273,11 @@ private fun VideoDescription(
 
                         // 作者名字
                         Text(
-                            modifier = Modifier.padding(horizontal = 16.dp),
+                            modifier = Modifier
+                                .padding(horizontal = 16.dp)
+                                .noRippleClickable {
+                                    navController.navigate("user/${videoDetail.authorName}")
+                                },
                             text = videoDetail.authorName,
                             fontWeight = FontWeight.Bold,
                             fontSize = 25.sp,
@@ -511,7 +487,7 @@ private fun VideoDescription(
 }
 
 @Composable
-private fun CommentPage(videoViewModel: VideoViewModel) {
+private fun CommentPage(navController: NavController, videoViewModel: VideoViewModel) {
     val pager = videoViewModel.commentPager.collectAsLazyPagingItems()
     val state = rememberSwipeRefreshState(pager.loadState.refresh == LoadState.Loading)
     if (pager.loadState.refresh is LoadState.Error) {
@@ -546,17 +522,19 @@ private fun CommentPage(videoViewModel: VideoViewModel) {
                 onRefresh = { pager.refresh() }) {
                 LazyColumn(modifier = Modifier.fillMaxSize()) {
                     if (pager.itemCount == 0 && pager.loadState.refresh is LoadState.NotLoading) {
-                        item { 
-                            Box(modifier = Modifier
-                                .fillMaxWidth()
-                                .height(150.dp), contentAlignment = Alignment.Center){
+                        item {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(150.dp), contentAlignment = Alignment.Center
+                            ) {
                                 Text(text = "暂无评论", fontWeight = FontWeight.Bold)
                             }
                         }
                     }
 
                     items(pager) {
-                        CommentItem(it!!)
+                        CommentItem(navController, it!!)
                     }
 
                     when (pager.loadState.append) {

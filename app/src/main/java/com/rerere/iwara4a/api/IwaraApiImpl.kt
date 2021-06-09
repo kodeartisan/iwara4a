@@ -13,6 +13,7 @@ import com.rerere.iwara4a.model.index.SortType
 import com.rerere.iwara4a.model.index.SubscriptionList
 import com.rerere.iwara4a.model.session.Session
 import com.rerere.iwara4a.model.user.Self
+import com.rerere.iwara4a.model.user.UserData
 import com.rerere.iwara4a.util.autoRetry
 import okhttp3.OkHttpClient
 
@@ -100,6 +101,13 @@ class IwaraApiImpl(
             page,
             sort,
             filter
+        )
+    }
+
+    override suspend fun getUser(session: Session, userId: String): Response<UserData> = autoRetry {
+        iwaraParser.getUser(
+            session,
+            userId
         )
     }
 }

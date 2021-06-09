@@ -35,6 +35,7 @@ import com.rerere.iwara4a.ui.screen.image.ImageScreen
 import com.rerere.iwara4a.ui.screen.index.IndexScreen
 import com.rerere.iwara4a.ui.screen.login.LoginScreen
 import com.rerere.iwara4a.ui.screen.splash.SplashScreen
+import com.rerere.iwara4a.ui.screen.user.UserScreen
 import com.rerere.iwara4a.ui.screen.video.VideoScreen
 import com.rerere.iwara4a.ui.theme.Iwara4aTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -125,6 +126,14 @@ class MainActivity : ComponentActivity() {
                         }
                     )){
                         ImageScreen(navController, it.arguments?.getString("imageId")!!)
+                    }
+
+                    composable("user/{userId}", arguments = listOf(
+                        navArgument("userId"){
+                            type = NavType.StringType
+                        }
+                    )){
+                        UserScreen(navController, it.arguments?.getString("userId")!!)
                     }
                 }
             }

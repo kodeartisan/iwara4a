@@ -22,14 +22,14 @@ private const val USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleW
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
-    private const val TIMEOUT_SECONDS = 2L
+    private const val TIMEOUT = 1500L
 
     @Provides
     @Singleton
     fun provideHttpClient(): OkHttpClient = OkHttpClient.Builder()
-        .connectTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
-        .readTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
-        .callTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
+        .connectTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
+        .readTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
+        .callTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
         .addInterceptor(UserAgentInterceptor(USER_AGENT))
         //.addInterceptor(HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.HEADERS })
         .cookieJar(CookieJarHelper())

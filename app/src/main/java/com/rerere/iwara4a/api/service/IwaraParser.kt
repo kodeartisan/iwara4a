@@ -15,6 +15,7 @@ import com.rerere.iwara4a.model.flag.LikeResponse
 import com.rerere.iwara4a.model.index.*
 import com.rerere.iwara4a.model.session.Session
 import com.rerere.iwara4a.model.user.Self
+import com.rerere.iwara4a.model.user.UserData
 import com.rerere.iwara4a.util.okhttp.await
 import com.rerere.iwara4a.util.okhttp.getCookie
 import kotlinx.coroutines.Dispatchers
@@ -448,11 +449,10 @@ class IwaraParser(
             // (用JSOUP解析网页真痛苦)
 
             val total = (commentDocu.select("h2[class=title]").first()?.text() ?: " 0 评论 ").trim().split(" ")[0].toInt()
-            val lastPage = commentDocu.select("li[class~=^pager-.+\$]").last()?.text()?.toInt() ?: 1
-            val hasNext = lastPage != (page + 1)
+            val hasNext = commentDocu.select("ul[class=pager]").select("li[class=pager-next]").any()
             val comments = parseAsComments(commentDocu)
 
-            Log.i(TAG, "getCommentList: Comment Result(total: $total, last: $lastPage, hasNext: $hasNext)")
+            Log.i(TAG, "getCommentList: Comment Result(total: $total, hasNext: $hasNext)")
 
             Response.success(
                 CommentList(
@@ -521,6 +521,47 @@ class IwaraParser(
                     currentPage = page,
                     hasNext = hasNextPage,
                     mediaList = previewList
+                )
+            )
+        }catch (e: Exception){
+            e.printStackTrace()
+            Response.failed(e.javaClass.name)
+        }
+    }
+
+    suspend fun getUser(session: Session, userId: String): Response<UserData> = withContext(Dispatchers.IO){
+        try{
+            Log.i(TAG, "getUser: Start load user data: $userId")
+            okHttpClient.getCookie().init(session)
+
+            val request = Request.Builder()
+                .url("https://ecchi.iwara.tv/users/$userId")
+                .get()
+                .build()
+            val response = okHttpClient.newCall(request).await()
+            require(response.isSuccessful)
+            val body = Jsoup.parse(response.body?.string() ?: error("null body")).body()
+
+            val nickname = body.getElementsByClass("views-field views-field-name").first().text()
+            val profilePic = "https:" + body.getElementsByClass("views-field views-field-picture")
+                .first()
+                .child(0)
+                .child(0)
+                .attr("src")
+            val joinDate = body.select("div[class=views-field views-field-created]").first().child(1).text()
+            val lastSeen = body.select("div[class=views-field views-field-login]").first().child(1).text()
+            val about = body.select("div[class=views-field views-field-field-about]").first()?.text() ?: ""
+
+            Log.i(TAG, "getUser: Loaded UserData(user: $nickname)")
+
+            Response.success(
+                UserData(
+                    userId = userId,
+                    username = nickname,
+                    pic = profilePic,
+                    joinDate = joinDate,
+                    lastSeen = lastSeen,
+                    about = about
                 )
             )
         }catch (e: Exception){

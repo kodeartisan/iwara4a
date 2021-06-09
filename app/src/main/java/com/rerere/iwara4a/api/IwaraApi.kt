@@ -12,6 +12,7 @@ import com.rerere.iwara4a.model.index.SortType
 import com.rerere.iwara4a.model.index.SubscriptionList
 import com.rerere.iwara4a.model.session.Session
 import com.rerere.iwara4a.model.user.Self
+import com.rerere.iwara4a.model.user.UserData
 
 /**
  * 提供远程资源API, 通过连接IWARA来获取数据
@@ -96,4 +97,13 @@ interface IwaraApi {
      * @return 资源列表
      */
     suspend fun getMediaList(session: Session, mediaType: MediaType, @IntRange(from = 0) page: Int, sort: SortType, filter: List<String>): Response<MediaList>
+
+    /**
+     * 加载用户资料
+     *
+     * @param session 登录凭据
+     * @param userId 用户ID
+     * @return 用户数据
+     */
+    suspend fun getUser(session: Session, userId: String): Response<UserData>
 }
