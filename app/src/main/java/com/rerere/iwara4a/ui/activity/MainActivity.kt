@@ -18,6 +18,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.core.view.WindowCompat
+import androidx.navigation.NavDeepLink
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -90,6 +91,7 @@ class MainActivity : ComponentActivity() {
         ProvideWindowInsets {
             Iwara4aTheme {
                 val navController = rememberNavController()
+
                 val systemUiController = rememberSystemUiController()
                 val primaryColor = MaterialTheme.colors.primarySurface
 
@@ -116,7 +118,7 @@ class MainActivity : ComponentActivity() {
                         navArgument("videoId"){
                             type = NavType.StringType
                         }
-                    )){
+                    ), deepLinks = listOf(NavDeepLink("https://ecchi.iwara.tv/videos/{videoId}"))){
                         VideoScreen(navController, it.arguments?.getString("videoId")!!)
                     }
 
@@ -124,7 +126,7 @@ class MainActivity : ComponentActivity() {
                         navArgument("imageId"){
                             type = NavType.StringType
                         }
-                    )){
+                    ), deepLinks = listOf(NavDeepLink("https://ecchi.iwara.tv/images/{imageId}"))){
                         ImageScreen(navController, it.arguments?.getString("imageId")!!)
                     }
 
