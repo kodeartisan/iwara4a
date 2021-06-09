@@ -134,7 +134,7 @@ class MainActivity : ComponentActivity() {
                         navArgument("userId"){
                             type = NavType.StringType
                         }
-                    )){
+                    ), deepLinks = listOf(NavDeepLink("https://ecchi.iwara.tv/users/{userId}"))){
                         UserScreen(navController, it.arguments?.getString("userId")!!)
                     }
                 }
