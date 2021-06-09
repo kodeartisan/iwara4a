@@ -13,6 +13,7 @@ data class VideoDetail(
     // 视频作者信息
     val authorPic: String,
     val authorName: String,
+    val authorId: String,
 
     // 作者的更多视频
     val moreVideo: List<MoreVideo>,
@@ -31,6 +32,7 @@ data class VideoDetail(
             "",
             "",
             VideoLink(),
+            "",
             "",
             "",
             "",

@@ -261,7 +261,7 @@ private fun VideoDescription(
                                 .size(40.dp)
                                 .clip(CircleShape)
                                 .noRippleClickable {
-                                    navController.navigate("user/${videoDetail.authorName}")
+                                    navController.navigate("user/${videoDetail.authorId}")
                                 }
                         ) {
                             Image(
@@ -276,7 +276,7 @@ private fun VideoDescription(
                             modifier = Modifier
                                 .padding(horizontal = 16.dp)
                                 .noRippleClickable {
-                                    navController.navigate("user/${videoDetail.authorName}")
+                                    navController.navigate("user/${videoDetail.authorId}")
                                 },
                             text = videoDetail.authorName,
                             fontWeight = FontWeight.Bold,

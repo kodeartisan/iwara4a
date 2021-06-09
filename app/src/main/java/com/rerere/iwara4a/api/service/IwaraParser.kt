@@ -262,7 +262,8 @@ class IwaraParser(
                 val description =
                     body.select("div[class=field field-name-body field-type-text-with-summary field-label-hidden]")
                         .first()?.text() ?: ""
-                val authorId = body.getElementsByClass("username").first().text().trim()
+                val authorId = body.select("a[class=username]").first().attr("href").let { it.substring(it.lastIndexOf("/") + 1) }
+                val authorName = body.getElementsByClass("username").first().text().trim()
                 val authorPic =
                     "https:" + body.getElementsByClass("user-picture").first().select("img")
                         .attr("src")
@@ -307,7 +308,7 @@ class IwaraParser(
                 val followLink =
                     followFlag.attr("href").let { it.substring(it.indexOf("/follow/") + 8) }
 
-                Log.i(TAG, "getVideoPageDetail: Result(title=$title, author=$authorId)")
+                Log.i(TAG, "getVideoPageDetail: Result(title=$title, author=$authorName)")
                 Log.i(TAG, "getVideoPageDetail: Like: $isLike LikeAPI: $likeLink")
                 Log.i(TAG, "getVideoPageDetail: Follow: $isFollow FollowAPI: $followLink")
 
@@ -320,7 +321,8 @@ class IwaraParser(
                         postDate = postDate,
                         description = description,
                         authorPic = authorPic,
-                        authorName = authorId,
+                        authorName = authorName,
+                        authorId = authorId,
                         videoLinks = VideoLink(),// 稍后再用Retrofit获取
                         moreVideo = moreVideo,
 
@@ -411,7 +413,8 @@ class IwaraParser(
                 for (docu in document.children()) {
                     // 此条为评论
                     if (docu.`is`("div[class~=^comment .+\$]")) {
-                        val authorId = docu.select("a[class=username]").first().text()
+                        val authorId = docu.select("a[class=username]").first().attr("href").let { it.substring(it.lastIndexOf("/") + 1) }
+                        val authorName = docu.select("a[class=username]").first().text()
                         val authorPic = "https:" + docu.select("div[class=user-picture]").first().select("img").first().attr("src")
                         val posterTypeValue = docu.attr("class")
                         var posterType = CommentPosterType.NORMAL
@@ -426,6 +429,7 @@ class IwaraParser(
 
                         val comment = Comment(
                             authorId = authorId,
+                            authorName = authorName,
                             authorPic = authorPic,
                             posterType= posterType,
                             content = content,

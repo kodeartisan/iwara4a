@@ -9,6 +9,7 @@ data class CommentList(
 
 data class Comment(
     val authorId: String,
+    val authorName: String,
     val authorPic: String,
     val posterType: CommentPosterType,
 

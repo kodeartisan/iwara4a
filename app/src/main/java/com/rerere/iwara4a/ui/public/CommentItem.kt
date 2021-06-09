@@ -61,7 +61,7 @@ fun CommentItem(navController: NavController, comment: Comment) {
                             modifier = Modifier.padding(end = 8.dp).noRippleClickable {
                                 navController.navigate("user/${comment.authorId}")
                             },
-                            text = comment.authorId,
+                            text = comment.authorName,
                             fontWeight = FontWeight.Bold,
                             fontSize = 19.sp
                         )
