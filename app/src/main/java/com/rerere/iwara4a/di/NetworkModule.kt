@@ -22,7 +22,7 @@ private const val USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleW
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
-    private const val TIMEOUT = 1500L
+    private const val TIMEOUT = 5000L
 
     @Provides
     @Singleton

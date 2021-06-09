@@ -11,7 +11,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.runtime.*
@@ -170,7 +169,11 @@ private fun Content(loginViewModel: LoginViewModel, navController: NavController
                     if (it) {
                         // 登录成功
                         Toast.makeText(context, "登录成功", Toast.LENGTH_SHORT).show()
-                        navController.popBackStack()
+                        navController.navigate("index"){
+                            popUpTo("login"){
+                                inclusive = true
+                            }
+                        }
                     } else {
                         // 登录失败
                         failedDialog.show()
@@ -212,11 +215,6 @@ private fun TopBar(navController: NavController) {
     FullScreenTopBar(
         title = {
             Text(text = "登录账号")
-        },
-        navigationIcon = {
-            IconButton(onClick = { navController.popBackStack() }) {
-                Icon(Icons.Default.ArrowBack, null)
-            }
         }
     )
 }

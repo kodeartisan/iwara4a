@@ -20,18 +20,21 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.rerere.iwara4a.R
 import kotlinx.coroutines.delay
 
 @Composable
-fun SplashScreen(navController: NavController){
+fun SplashScreen(navController: NavController, splashViewModel: SplashViewModel = hiltViewModel()){
     Box(modifier = Modifier
         .fillMaxSize()
         .background(MaterialTheme.colors.primarySurface), contentAlignment = Alignment.Center){
 
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Box(modifier = Modifier.size(80.dp).clip(CircleShape)){
+            Box(modifier = Modifier
+                .size(80.dp)
+                .clip(CircleShape)){
                 Image(modifier = Modifier.fillMaxSize(), painter = painterResource(R.drawable.logo), contentDescription = null)
             }
             Text(text = "IWARA", fontSize = 40.sp, fontWeight = FontWeight.Bold, color = Color.White)
@@ -42,9 +45,18 @@ fun SplashScreen(navController: NavController){
         delay(1000L)
 
         // 前往主页
-        navController.navigate("index"){
-            popUpTo("splash"){
-                inclusive = true
+        if(splashViewModel.isLogin()) {
+            navController.navigate("index") {
+                popUpTo("splash") {
+                    inclusive = true
+                }
+            }
+        } else {
+            // 登录
+            navController.navigate("login") {
+                popUpTo("splash") {
+                    inclusive = true
+                }
             }
         }
     }
