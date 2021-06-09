@@ -47,6 +47,7 @@ import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.rerere.iwara4a.R
 import com.rerere.iwara4a.model.detail.video.VideoDetail
+import com.rerere.iwara4a.model.index.MediaType
 import com.rerere.iwara4a.ui.local.LocalScreenOrientation
 import com.rerere.iwara4a.ui.public.CommentItem
 import com.rerere.iwara4a.ui.public.ExoPlayer
@@ -54,6 +55,7 @@ import com.rerere.iwara4a.ui.public.FullScreenTopBar
 import com.rerere.iwara4a.ui.public.TabItem
 import com.rerere.iwara4a.ui.theme.PINK
 import com.rerere.iwara4a.util.noRippleClickable
+import com.rerere.iwara4a.util.shareMedia
 
 @ExperimentalMaterialApi
 @ExperimentalAnimationApi
@@ -414,7 +416,7 @@ private fun VideoDescription(
                         Column(
                             modifier = Modifier
                                 .weight(1f)
-                                .clickable { }, horizontalAlignment = Alignment.CenterHorizontally
+                                .clickable { shareMedia(context, MediaType.VIDEO, videoDetail.id) }, horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Icon(Icons.Default.Share, null)
                             Text(text = "分享")

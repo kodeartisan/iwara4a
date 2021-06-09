@@ -40,6 +40,8 @@ fun SplashScreen(navController: NavController){
     }
     LaunchedEffect(Unit){
         delay(1000L)
+
+        // 前往主页
         navController.navigate("index"){
             popUpTo("splash"){
                 inclusive = true
