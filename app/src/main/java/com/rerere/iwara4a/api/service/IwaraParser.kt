@@ -16,6 +16,7 @@ import com.rerere.iwara4a.model.index.*
 import com.rerere.iwara4a.model.session.Session
 import com.rerere.iwara4a.model.user.Self
 import com.rerere.iwara4a.model.user.UserData
+import com.rerere.iwara4a.util.okhttp.CookieJarHelper
 import com.rerere.iwara4a.util.okhttp.await
 import com.rerere.iwara4a.util.okhttp.getCookie
 import kotlinx.coroutines.Dispatchers
@@ -26,6 +27,7 @@ import okhttp3.Request
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import java.net.URLDecoder
+import java.util.concurrent.TimeUnit
 
 private const val TAG = "IwaraParser"
 
@@ -44,7 +46,13 @@ class IwaraParser(
 
     suspend fun login(username: String, password: String): Response<Session> =
         withContext(Dispatchers.IO) {
-            okHttpClient.getCookie().clean()
+            // okHttpClient.getCookie().clean()
+            val httpClient = OkHttpClient.Builder()
+                .connectTimeout(25, TimeUnit.SECONDS)
+                .readTimeout(25, TimeUnit.SECONDS)
+                .writeTimeout(25, TimeUnit.SECONDS)
+                .cookieJar(CookieJarHelper())
+                .build()
 
             try {
                 // 首先访问login页面解析出 antibot_key
@@ -52,7 +60,7 @@ class IwaraParser(
                     .url("https://ecchi.iwara.tv/user/login?destination=front")
                     .get()
                     .build()
-                val keyResponse = okHttpClient.newCall(keyRequest).await()
+                val keyResponse = httpClient.newCall(keyRequest).await()
                 val keyResponseData = keyResponse.body?.string() ?: error("no body response")
                 val headElement = Jsoup.parse(keyResponseData).head().html()
                 val startIndex = headElement.indexOf("key\":\"") + 6
@@ -72,11 +80,11 @@ class IwaraParser(
                     .url("https://ecchi.iwara.tv/user/login?destination=front")
                     .post(formBody)
                     .build()
-                val loginResponse = okHttpClient.newCall(loginRequest).await()
+                val loginResponse = httpClient.newCall(loginRequest).await()
                 require(loginResponse.isSuccessful)
 
                 if (loginResponse.isSuccessful) {
-                    val cookies = okHttpClient.getCookie().filter { it.domain == "iwara.tv" }
+                    val cookies = httpClient.getCookie().filter { it.domain == "iwara.tv" }
                     if (cookies.isNotEmpty()) {
                         val cookie = cookies.first()
                         Log.i(

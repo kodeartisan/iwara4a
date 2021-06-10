@@ -23,13 +23,15 @@ import com.google.accompanist.swiperefresh.SwipeRefreshIndicator
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.rerere.iwara4a.R
 import com.rerere.iwara4a.ui.public.MediaPreviewCard
+import com.rerere.iwara4a.ui.public.QueryParamSelector
 import com.rerere.iwara4a.ui.screen.index.IndexViewModel
 import com.rerere.iwara4a.util.noRippleClickable
 
 @Composable
-fun VideoListPage(navController: NavController, indexViewModel: IndexViewModel){
+fun VideoListPage(navController: NavController, indexViewModel: IndexViewModel) {
     val videoList = indexViewModel.videoPager.collectAsLazyPagingItems()
-    val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = videoList.loadState.refresh == LoadState.Loading)
+    val swipeRefreshState =
+        rememberSwipeRefreshState(isRefreshing = videoList.loadState.refresh == LoadState.Loading)
 
     Box(modifier = Modifier.fillMaxSize()) {
         if (videoList.loadState.refresh is LoadState.Error) {
@@ -42,10 +44,12 @@ fun VideoListPage(navController: NavController, indexViewModel: IndexViewModel){
                 contentAlignment = Alignment.Center
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Box(modifier = Modifier
-                        .size(160.dp)
-                        .padding(10.dp)
-                        .clip(CircleShape)) {
+                    Box(
+                        modifier = Modifier
+                            .size(160.dp)
+                            .padding(10.dp)
+                            .clip(CircleShape)
+                    ) {
                         Image(
                             modifier = Modifier.fillMaxSize(),
                             painter = painterResource(R.drawable.anime_1),
@@ -56,10 +60,27 @@ fun VideoListPage(navController: NavController, indexViewModel: IndexViewModel){
                 }
             }
         } else {
-            SwipeRefresh(state = swipeRefreshState, onRefresh = { videoList.refresh() }, indicator = {s, trigger ->
-                SwipeRefreshIndicator(s, trigger, contentColor = MaterialTheme.colors.onSurface)
-            } ) {
+            SwipeRefresh(
+                state = swipeRefreshState,
+                onRefresh = { videoList.refresh() },
+                indicator = { s, trigger ->
+                    SwipeRefreshIndicator(s, trigger, contentColor = MaterialTheme.colors.onSurface)
+                }) {
                 LazyColumn(modifier = Modifier.fillMaxSize()) {
+                    item {
+                        QueryParamSelector(
+                            queryParam = indexViewModel.videoQueryParam,
+                            onChangeSort = {
+                                indexViewModel.videoQueryParam.sortType = it
+                                videoList.refresh()
+                            },
+                            onChangeFilters = {
+                                indexViewModel.videoQueryParam.filters = it
+                                videoList.refresh()
+                            }
+                        )
+                    }
+
                     items(videoList) {
                         MediaPreviewCard(navController, it!!)
                     }

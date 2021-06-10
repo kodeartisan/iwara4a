@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -40,7 +42,7 @@ fun IndexScreen(navController: NavController, indexViewModel: IndexViewModel = h
     val scaffoldState = rememberScaffoldState()
     Scaffold(
         scaffoldState = scaffoldState,
-        topBar = { TopBar(scaffoldState, indexViewModel) },
+        topBar = { TopBar(scaffoldState, indexViewModel, navController) },
         bottomBar = {
             BottomBar(pagerState = pagerState)
         },
@@ -70,7 +72,7 @@ fun IndexScreen(navController: NavController, indexViewModel: IndexViewModel = h
 }
 
 @Composable
-private fun TopBar(scaffoldState: ScaffoldState, indexViewModel: IndexViewModel) {
+private fun TopBar(scaffoldState: ScaffoldState, indexViewModel: IndexViewModel, navController: NavController) {
     val coroutineScope = rememberCoroutineScope()
     FullScreenTopBar(
         title = {
@@ -91,6 +93,11 @@ private fun TopBar(scaffoldState: ScaffoldState, indexViewModel: IndexViewModel)
                         contentDescription = null
                     )
                 }
+            }
+        },
+        actions = {
+            IconButton(onClick = { navController.navigate("search") }) {
+                Icon(Icons.Default.Search, null )
             }
         }
     )
