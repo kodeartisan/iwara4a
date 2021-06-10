@@ -27,7 +27,7 @@ class IwaraApiImpl(
     private val iwaraService: IwaraService
 ) : IwaraApi {
     override suspend fun login(username: String, password: String): Response<Session> =
-        autoRetry { iwaraParser.login(username, password) }
+        autoRetry(maxRetry = 3) { iwaraParser.login(username, password) }
 
     override suspend fun getSelf(session: Session): Response<Self> =
         autoRetry { iwaraParser.getSelf(session) }

@@ -74,8 +74,9 @@ private fun Content(loginViewModel: LoginViewModel, navController: NavController
     }
     failedDialog.build {
         title("登录失败")
-        message("请尝试重新登录或者检查你的用户名和密码是否正确")
+        message("请检查你的用户名和密码是否正确，如果确定准确，请再次重试登录")
         message("错误内容: ${loginViewModel.errorContent}")
+        message("(别忘记挂梯子！)")
         buttons {
             button("好的") {
                 failedDialog.hide()
