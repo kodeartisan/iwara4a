@@ -3,6 +3,7 @@ package com.rerere.iwara4a.repo
 import androidx.annotation.IntRange
 import com.rerere.iwara4a.api.IwaraApi
 import com.rerere.iwara4a.api.Response
+import com.rerere.iwara4a.model.index.MediaList
 import com.rerere.iwara4a.model.index.MediaType
 import com.rerere.iwara4a.model.index.SortType
 import com.rerere.iwara4a.model.index.SubscriptionList
@@ -39,4 +40,8 @@ class MediaRepo @Inject constructor(
 
     suspend fun loadComment(session: Session, mediaType: MediaType, mediaId: String, page: Int) =
         iwaraApi.getCommentList(session, mediaType, mediaId, page)
+
+    suspend fun search(session: Session, query: String, page: Int, sort: SortType, filter: List<String>): Response<MediaList> = iwaraApi.search(
+        session, query, page, sort, filter
+    )/**/
 }

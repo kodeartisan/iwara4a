@@ -106,4 +106,16 @@ interface IwaraApi {
      * @return 用户数据
      */
     suspend fun getUser(session: Session, userId: String): Response<UserData>
+
+    /**
+     * 搜索视频和图片
+     *
+     * @param session 登录凭据
+     * @param query 搜索关键词
+     * @param page 页数
+     * @param sort 排序条件
+     * @param filter 过滤条件
+     * @return 资源列表
+     */
+    suspend fun search(session: Session, query: String, @IntRange(from = 0) page: Int, sort: SortType, filter: List<String>): Response<MediaList>
 }

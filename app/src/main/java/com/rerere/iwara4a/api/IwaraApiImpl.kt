@@ -15,7 +15,6 @@ import com.rerere.iwara4a.model.session.Session
 import com.rerere.iwara4a.model.user.Self
 import com.rerere.iwara4a.model.user.UserData
 import com.rerere.iwara4a.util.autoRetry
-import okhttp3.OkHttpClient
 
 /**
  * IwaraAPI接口的具体实现
@@ -24,7 +23,6 @@ import okhttp3.OkHttpClient
  * 通过restful api直接访问来选择使用哪个模块获取数据
  */
 class IwaraApiImpl(
-    private val okHttpClient: OkHttpClient,
     private val iwaraParser: IwaraParser,
     private val iwaraService: IwaraService
 ) : IwaraApi {
@@ -108,6 +106,22 @@ class IwaraApiImpl(
         iwaraParser.getUser(
             session,
             userId
+        )
+    }
+
+    override suspend fun search(
+        session: Session,
+        query: String,
+        page: Int,
+        sort: SortType,
+        filter: List<String>
+    ): Response<MediaList> = autoRetry {
+        iwaraParser.search(
+            session,
+            query,
+            page,
+            sort,
+            filter
         )
     }
 }

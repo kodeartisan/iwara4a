@@ -301,8 +301,7 @@ class IwaraParser(
                         )
                     }
                 // 喜欢
-                val likeFlag = body.select("a[href~=^/flag/.+/like/.+\$\$]").first()
-                println(likeFlag)
+                val likeFlag = body.select("a[href~=^/flag/.+/like/.+\$]").first()
                 val isLike = likeFlag.attr("href").startsWith("/flag/unflag/")
                 val likeLink = URLDecoder.decode(
                     likeFlag.attr("href").let { it.substring(it.indexOf("/like/") + 6) }, "UTF-8"
@@ -574,6 +573,65 @@ class IwaraParser(
                     joinDate = joinDate,
                     lastSeen = lastSeen,
                     about = about
+                )
+            )
+        }catch (e: Exception){
+            e.printStackTrace()
+            Response.failed(e.javaClass.name)
+        }
+    }
+
+    suspend fun search(session: Session, query: String, page: Int, sort: SortType, filter: List<String>): Response<MediaList> = withContext(Dispatchers.IO){
+        try {
+            Log.i(TAG, "search: Start searching (query=$query, page=$page, sort=${sort.name})")
+            okHttpClient.getCookie().init(session)
+
+            fun collectFilters(): String {
+                var index = 0
+                return filter.joinToString(separator = "&") {
+                    "f[${index++}]=$it"
+                }
+            }
+            val filters = collectFilters()
+
+            val request = Request.Builder()
+                .url("https://ecchi.iwara.tv/search?query=$query&sort=${sort.value}&page=$page" + if(filter.isNotEmpty()) "&${filters}" else "")
+                .get()
+                .build()
+            val response = okHttpClient.newCall(request).await()
+            val body = Jsoup.parse(response.body?.string() ?: error("empty body")).body()
+
+
+            val mediaList: List<MediaPreview> = body.select("div[class~=^views-column .+\$]").map {
+                val type = if(it.select("h3[class=title]").any()) MediaType.VIDEO else MediaType.IMAGE
+                val title = it.select("h3[class=title]").first()?.text() ?: it.select("h1[class=title]").first().text()
+                val author = if(type == MediaType.VIDEO) it.select("div[class=submitted]").select("a").first().text() else it.select("div[class=submitted]").select("a").last().text()
+                val pic = "https:" + it.select("div[class=field-item even]").first().select("img").attr("src")
+                val videoInfo = if(type ==MediaType.VIDEO) it.select("div[class=video-info]").first().text() else it.select("div[class=node-views]").first().text()
+                val watchs = if(type == MediaType.VIDEO) videoInfo.split(" ")[0] else videoInfo
+                val likes = if(type == MediaType.VIDEO) videoInfo.split(" ")[1] else ""
+
+                val link = if(type == MediaType.VIDEO) it.select("h3[class=title]").first().select("a").attr("href") else "/images/$title"
+                val id = link.substring(link.lastIndexOf("/") + 1)
+
+                MediaPreview(
+                    title = title,
+                    author = author,
+                    previewPic = pic,
+                    likes = likes,
+                    watchs = watchs,
+                    type = type,
+                    mediaId = id
+                )
+            }
+
+            val hasNext = body.select("ul[class=pager]").select("li[class=pager-next]").any()
+
+            Response.success(
+                MediaList(
+                    currentPage = page,
+                    hasNext = hasNext,
+                    mediaList = mediaList
                 )
             )
         }catch (e: Exception){

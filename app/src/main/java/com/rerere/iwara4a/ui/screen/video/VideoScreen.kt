@@ -554,7 +554,17 @@ private fun CommentPage(navController: NavController, videoViewModel: VideoViewM
                             }
                         }
                         is LoadState.Error -> {
-
+                            item {
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .noRippleClickable { pager.retry() }
+                                        .padding(16.dp),
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Text(text = "加载失败，点击重试", fontWeight = FontWeight.Bold)
+                                }
+                            }
                         }
                     }
                 }
