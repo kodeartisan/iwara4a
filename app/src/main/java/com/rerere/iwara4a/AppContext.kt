@@ -4,6 +4,9 @@ import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
 import dagger.hilt.android.HiltAndroidApp
+import xyz.doikki.videoplayer.exo.ExoMediaPlayerFactory
+import xyz.doikki.videoplayer.player.VideoViewConfig
+import xyz.doikki.videoplayer.player.VideoViewManager
 
 @HiltAndroidApp
 class AppContext : Application() {
@@ -14,6 +17,9 @@ class AppContext : Application() {
     override fun onCreate() {
         super.onCreate()
         instance = this
+
+        // 使用ExoPlayer解码
+        VideoViewManager.setConfig(VideoViewConfig.newBuilder().setPlayerFactory(ExoMediaPlayerFactory.create()).build())
     }
 }
 

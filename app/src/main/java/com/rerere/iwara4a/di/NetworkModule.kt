@@ -23,7 +23,7 @@ private const val USER_AGENT =
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
-    private const val TIMEOUT = 5000L
+    private const val TIMEOUT = 3000L
 
     @Provides
     @Singleton

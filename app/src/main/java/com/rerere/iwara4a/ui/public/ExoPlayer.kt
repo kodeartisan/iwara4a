@@ -10,7 +10,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.SimpleExoPlayer
-import com.google.android.exoplayer2.ui.PlayerView
+import com.google.android.exoplayer2.ui.StyledPlayerView
 
 private const val TAG = "ExoPlayerCompose"
 
@@ -31,7 +31,7 @@ fun ExoPlayer(modifier: Modifier = Modifier, videoLink: String) {
     }
 
     AndroidView(modifier = modifier, factory = {
-        PlayerView(it).apply {
+        StyledPlayerView(it).apply {
             player = exoPlayer
         }
     })
@@ -42,4 +42,24 @@ fun ExoPlayer(modifier: Modifier = Modifier, videoLink: String) {
             Log.i(TAG, "ExoPlayer: Released the Player")
         }
     }
+    /*
+    // TODO: TEST DKVideoPlayer
+    AndroidView(modifier = modifier, factory = {
+        VideoView<ExoMediaPlayer>(it).apply {
+            setUrl(videoLink)
+            setVideoController(StandardVideoController(it).apply {
+                addDefaultControlComponent("播放视频", false)
+            })
+        }
+    }) {
+        it.setUrl(videoLink)
+        it.start()
+    }
+
+    DisposableEffect(Unit) {
+        onDispose {
+
+        }
+    }
+     */
 }

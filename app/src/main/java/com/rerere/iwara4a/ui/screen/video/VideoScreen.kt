@@ -126,7 +126,6 @@ fun VideoScreen(
                 .fillMaxSize()
                 .navigationBarsWithImePadding()
         ) {
-            // Player
             ExoPlayer(
                 modifier = if (orientation == Configuration.ORIENTATION_PORTRAIT)
                     Modifier
@@ -416,7 +415,8 @@ private fun VideoDescription(
                         Column(
                             modifier = Modifier
                                 .weight(1f)
-                                .clickable { shareMedia(context, MediaType.VIDEO, videoDetail.id) }, horizontalAlignment = Alignment.CenterHorizontally
+                                .clickable { shareMedia(context, MediaType.VIDEO, videoDetail.id) },
+                            horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Icon(Icons.Default.Share, null)
                             Text(text = "分享")
